@@ -9,7 +9,7 @@ CREATE TABLE users (
 CREATE TABLE projects (
     id SERIAL PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
-    owner_id int NOT NULL,
+    owner_id INT NOT NULL,
     description TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -22,8 +22,10 @@ CREATE TABLE tasks (
     description TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    project_id int NOT NULL,
-    assignee_id int NOT NULL,
+    due_at TIMESTAMP,
+    status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'in progress', 'completed')),
+    project_id INT NOT NULL,
+    assignee_id INT NULL,
     FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-    FOREIGN KEY (assignee_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (assignee_id) REFERENCES users(id) ON DELETE SET NULL
 );
