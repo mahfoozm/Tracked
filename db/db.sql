@@ -1,6 +1,3 @@
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS projects;
-
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -10,7 +7,10 @@ CREATE TABLE users (
 
 CREATE TABLE projects (
     id SERIAL PRIMARY KEY,
-    projectName VARCHAR(150) NOT NULL,
-    projectOwner int NOT NULL,
+    name VARCHAR(150) NOT NULL,
+    ownerID int NOT NULL,
+    projectDescription TEXT,
+    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (projectOwner) REFERENCES users(id) ON DELETE CASCADE
 );
