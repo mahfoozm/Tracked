@@ -7,17 +7,17 @@ This service authenticates users and sets up auth for their requests.
 To run this service in a Docker container (from this directory), you can use
 
 ```shell
-docker build -t auth-service .
+docker build -t user-service .
 ```
 
 ```shell
-docker run -it --rm -p 8081:8081 auth-service
+docker run -it --rm -p 8081:8081 user-service
 ```
 
 You can also use Docker Compose from the parent directory.
 
 ```shell
-docker compose up auth-service -d
+docker compose up user-service -d
 ```
 
 ## Running Locally
@@ -45,11 +45,11 @@ and on Windows you can use
 ./mvnw.cmd clean package
 ```
 
-The JAR file will be called `auth-<VERSION>.jar`, where `<VERSION>` is the
+The JAR file will be called `user-<VERSION>.jar`, where `<VERSION>` is the
 version from the [pom.xml](./pom.xml) file.
 
 From here, you can run it like a normal JAR file
 
 ```shell
-java -jar auth-<VERSION>.jar
+java -jar user-<VERSION>.jar
 ```
