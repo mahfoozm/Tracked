@@ -1,39 +1,31 @@
+// Package kafka provides a Kafka consumer for handling incoming messages from
+// Kafka and broadcasting them to connected WebSocket clients.
 package kafka
 
 import (
 	"log"
+	"notification-service/client"
 	"sync"
 
 	"github.com/IBM/sarama"
-	"github.com/gorilla/websocket"
 )
 
 const (
-	broker = "localhost:9092"
-	topic  = "test_topic"
+	broker = "kafka:9092" // Kafka broker address.
+	topic  = "test_topic" // Kafka topic to consume messages from.
 )
 
-func sendMessageToClients(message *string, clientsMutex *sync.Mutex, clients *map[*websocket.Conn]bool) {
-	clientsMutex.Lock()
-
-	// Send the message to each connection in the client mapping
-	for conn := range *clients {
-		// Send the message to the connection
-		err := conn.WriteMessage(websocket.TextMessage, []byte(*message))
-
-		// If there was an error sending the websocket message, close
-		// the connection and remove it from the client mapping
-		if err != nil {
-			log.Println("Error sending to websocket:", err)
-			conn.Close()
-			delete(*clients, conn)
-		}
-	}
-
-	clientsMutex.Unlock()
+// KafkaConsumer manages the consumption of messages from Kafka and broadcasting
+// them to WebSocket clients.
+type KafkaConsumer struct {
+	Cm       *client.ClientManager // ClientManager to broadcast messages to WebSocket clients.
+	Shutdown chan struct{}         // Channel to signal shutdown of the Kafka consumer.
 }
 
-func StartKafkaConsumer(wg *sync.WaitGroup, clientsMutex *sync.Mutex, clients *map[*websocket.Conn]bool, shutdown chan struct{}) {
+// StartKafkaConsumer starts the Kafka consumer that listens for messages on the
+// specified Kafka topic and broadcasts them to WebSocket clients. It shuts down
+// gracefully when a signal is received on the shutdown channel (kc.Shutdown).
+func (kc *KafkaConsumer) StartKafkaConsumer(wg *sync.WaitGroup) {
 	// Mark this goroutine as done when it finishes
 	defer wg.Done()
 
@@ -69,10 +61,11 @@ func StartKafkaConsumer(wg *sync.WaitGroup, clientsMutex *sync.Mutex, clients *m
 			message := string(msg.Value)
 			log.Printf("Received message: %s\n", message)
 
-			sendMessageToClients(&message, clientsMutex, clients)
+			// Send message to connections
+			kc.Cm.BroadcastMessage(message)
 
 		// Shutdown signal
-		case <-shutdown:
+		case <-kc.Shutdown:
 			log.Println("Shutting down Kafka consumer...")
 			return
 		}

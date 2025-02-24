@@ -4,6 +4,7 @@ services:
         container_name: zookeeper
         environment:
             ZOOKEEPER_CLIENT_PORT: 2181
+            ALLOW_ANONYMOUS_LOGIN: yes
         ports:
             - "2181:2181"
 
@@ -13,10 +14,26 @@ services:
         depends_on:
             - zookeeper
         ports:
-            - "9092:9092"
+            - "9093:9093"
         environment:
             KAFKA_BROKER_ID: 1
-            KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-            KAFKA_LISTENERS: "PLAINTEXT://:9092"
-            KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092"
-            KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+            ALLOW_PLAINTEXT_LISTENER: yes
+            KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+            KAFKA_CFG_LISTENERS: CLIENT://:9092,EXTERNAL://:9093
+            KAFKA_CFG_ADVERTISED_LISTENERS: CLIENT://kafka:9092,EXTERNAL://localhost:9093
+            KAFKA_CFG_INTER_BROKER_LISTENER_NAME: CLIENT
+            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+            KAFKA_LISTENERS: CLIENT://:9092,EXTERNAL://:9093
+            KAFKA_ADVERTISED_LISTENERS: CLIENT://kafka:9092,EXTERNAL://localhost:9093
+            KAFKA_INTER_BROKER_LISTENER_NAME: CLIENT
+
+    notification-service:
+        build: .
+        container_name: notification-service
+        ports:
+            - "8080:8080"
+        depends_on:
+            - kafka
+        environment:
+            - KAFKA_BROKER=kafka:9092

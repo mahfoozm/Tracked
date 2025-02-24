@@ -1,38 +1,37 @@
+// Package ws provides WebSocket handling for the notification-service.
+// It includes an HTTP server that upgrades connections to WebSockets, manages
+// connected clients, and gracefully shuts down on request.
 package ws
 
 import (
 	"log"
 	"net/http"
+	"notification-service/client"
 	"sync"
 
 	"github.com/gorilla/websocket"
 )
 
 var (
-	// Websocket upgrader.
+	// upgrader is a WebSocket upgrader that allows all origins (CORS policy).
 	upgrader = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool {
 			// Allow all origins (CORS policy)
 			return true
 		},
 	}
-
-	// Shutdown channel for shutting down Kafka consumers and websocket
-	// connections.
-	Shutdown = make(chan struct{})
-
-	// Mapping of websocket clients to booleans. The reason this is a mapping to
-	// boolean values instead of a list is because it simplifies adding and
-	// deleting connections. (If this were a list, we would need to append and
-	// delete elements (O(n)) instead of simply adding and removing from the
-	// mapping (O(1)).)
-	Clients = make(map[*websocket.Conn]bool)
-
-	// Mutex for synchronizing updates to clients mapping.
-	ClientsMutex sync.Mutex
 )
 
-func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
+// WebSocketHandler manages WebSocket connections and server shutdowns.
+type WebSocketHandler struct {
+	Cm       *client.ClientManager // Cm handles active WebSocket clients.
+	Shutdown chan struct{}         // Shutdown channel to signal termination.
+}
+
+// HandleWebSocket upgrades an HTTP connection to a WebSocket connection and
+// registers it in the ClientManager. This should be used with the http package
+// like this: http.HandleFunc("/ws", wsh.HandleWebSocket)
+func (wsh *WebSocketHandler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 	// Upgrade HTTP connection to websocket connection
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -40,83 +39,55 @@ func HandleWebSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Close the websocket connection when this function returns
-	defer conn.Close()
-
-	// Add the connection to the clients mapping
-	ClientsMutex.Lock()
-	Clients[conn] = true
-	ClientsMutex.Unlock()
+	// Add the connection to the connection manager
+	wsh.Cm.AddClient(conn)
 
 	log.Printf("New websocket connection: %s\n", conn.RemoteAddr())
-
-	// Block until shutdown signal is received
-	<-Shutdown
-
-	log.Printf("Closing websocket connection: %s\n", conn.RemoteAddr())
-
-	// Remove connection from clients mapping
-	ClientsMutex.Lock()
-	delete(Clients, conn)
-	ClientsMutex.Unlock()
 }
 
-func StartWebsocketServer(server *http.Server, wg *sync.WaitGroup) {
+// listenForShutdown waits for a shutdown signal (which will come from the
+// wsh.Shutdown channel), then tells that client manager (wsh.Cm) to close all
+// WebSocket connections, then shuts down the WebSocket server.
+func (wsh *WebSocketHandler) listenForShutdown(wg *sync.WaitGroup, server *http.Server) {
 	// Mark this goroutine as done when it finishes
 	defer wg.Done()
 
+	// Block until the shutdown signal is received
+	<-wsh.Shutdown
+
+	// Close all connections in the connection manager
+	wsh.Cm.CloseAllConnections()
+
+	log.Println("Stopping websocket server")
+
+	// Shutdown websocket server
+	err := server.Close()
+	if err != nil {
+		log.Fatalf("Websocket server shutdown failed: %v", err)
+	}
+}
+
+// StartWebsocketServer starts an HTTP server that listens for WebSocket
+// connections and handles shutdown gracefully.
+func (wsh *WebSocketHandler) StartWebsocketServer(wg *sync.WaitGroup) {
+	// Mark this goroutine as done when it finishes
+	defer wg.Done()
+
+	// Create new HTTP server that handles websocket connections
+	server := &http.Server{Addr: ":8080"}
+
+	// Listen for shutdown signals in a goroutine
+	wg.Add(1)
+	go wsh.listenForShutdown(wg, server)
+
+	// Handler for websocket connections
+	http.HandleFunc("/ws", wsh.HandleWebSocket)
+
 	log.Println("Listening for WebSocket connections at ws://localhost:8080/ws ...")
 
+	// Start the server
 	err := server.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		log.Fatalf("HTTP Server Error: %v", err)
 	}
 }
-
-// func main() {
-// 	var wg sync.WaitGroup
-
-// 	// Create new HTTP server that handles websocket connections
-// 	server := &http.Server{Addr: ":8080"}
-// 	http.HandleFunc("/ws", handleWebSocket)
-
-// 	// Make a channel that holds OS signals and send interrupt (Ctrl+C) signals
-// 	// to that channel
-// 	stop_channel := make(chan os.Signal, 1)
-// 	signal.Notify(stop_channel, os.Interrupt)
-
-// 	// Start the Kafka consumer in a goroutine
-// 	wg.Add(1)
-// 	go kafka.StartKafkaConsumer(&wg, &clientsMutex, &clients, shutdown)
-
-// 	// Start the websocket server in a goroutine
-// 	wg.Add(1)
-// 	go startWebsocketServer(server, &wg)
-
-// 	// Block until an interrupt is received in the stop channel
-// 	<-stop_channel
-
-// 	log.Println("Shutting down websocket server...")
-
-// 	// Close the shutdown channel, which will send a message to all goroutines
-// 	// listening on the channel
-// 	close(shutdown)
-
-// 	// Close all websocket connections
-// 	clientsMutex.Lock()
-// 	for conn := range clients {
-// 		conn.Close()
-// 	}
-// 	clientsMutex.Unlock()
-
-// 	// Shutdown websocket server
-// 	err := server.Close()
-// 	if err != nil {
-// 		log.Fatalf("Websocket server shutdown failed: %v", err)
-// 	}
-
-// 	// Wait for all goroutines to finish
-// 	wg.Wait()
-
-// 	log.Println("Websocket server shutdown")
-// }
