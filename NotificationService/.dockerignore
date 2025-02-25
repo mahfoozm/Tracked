@@ -1,0 +1,15 @@
+# Ignore Python scripts
+*.py
+
+# Ignore Python dependencies
+requirements.txt
+
+# Ignore Python virtual environment
+venv/
+
+# Ignore git directory and gitignore
+.git/
+.gitignore
+
+# Ignore HTML file that was used for testing
+index.html
