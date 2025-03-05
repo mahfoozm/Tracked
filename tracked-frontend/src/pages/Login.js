@@ -1,13 +1,20 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import registerImage from "../../assets/images/register-image.jpg"; // Ensure correct image path
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../services/AuthContext"; 
+import loginImage from "../assets/images/login-image.jpg"; 
 
-const Register = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+const Login = () => {
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [error, setError] = useState(null);
+  const navigate = useNavigate(); 
+  const { user, loginUser } = useAuth(); 
+
+  
+  useEffect(() => {
+    if (user) {
+      navigate("/profile"); 
+    }
+  }, [user, navigate]);
 
   const handleChange = (e) => {
     setFormData({
@@ -16,34 +23,30 @@ const Register = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("User Registered:", formData);
+    setError(null);
+
+    try {
+      await loginUser(formData.email, formData.password); 
+      navigate("/profile"); 
+    } catch (err) {
+      setError(err.message || "Invalid login credentials.");
+    }
   };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      
       <div className="hidden md:flex w-1/2 items-center justify-center p-5">
-        <img src={registerImage} alt="Work Setup" className="w-4/5 h-4/5 object-cover rounded-lg shadow-md" />
+        <img src={loginImage} alt="Project Management" className="w-4/5 h-4/5 object-cover rounded-lg shadow-md" />
       </div>
 
-      
       <div className="flex items-center justify-center w-full md:w-1/2 bg-white p-8 rounded-lg shadow-md">
         <div className="w-96">
-          <h2 className="text-2xl font-bold text-center text-blue-600">Register</h2>
+          <h2 className="text-2xl font-bold text-center text-blue-600">Login</h2>
+          {error && <p className="text-red-500 text-center">{error}</p>}
+
           <form className="mt-4" onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-700">Name:</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                className="w-full p-2 border border-gray-300 rounded mt-1"
-              />
-            </div>
             <div className="mb-4">
               <label className="block text-gray-700">Email:</label>
               <input
@@ -67,15 +70,15 @@ const Register = () => {
               />
             </div>
             <button className="w-full bg-blue-600 text-white p-2 rounded mt-4 hover:bg-blue-700">
-              Sign Up
+              Sign In
             </button>
           </form>
-          
+
           <p className="mt-4 text-center text-gray-700">
-            Already have an account?{" "}
-            <Link to="/login" className="text-blue-600 hover:underline">
+            Don't have an account?{" "}
+            <Link to="/signup" className="text-blue-600 hover:underline">
               Click here
-            </Link> to sign in.
+            </Link> to sign up.
           </p>
         </div>
       </div>
@@ -83,4 +86,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Login;
