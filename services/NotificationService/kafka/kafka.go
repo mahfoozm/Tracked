@@ -3,6 +3,7 @@
 package kafka
 
 import (
+	"encoding/json"
 	"log"
 	"notification-service/client"
 	"sync"
@@ -11,8 +12,8 @@ import (
 )
 
 const (
-	broker = "kafka:9092" // Kafka broker address.
-	topic  = "test_topic" // Kafka topic to consume messages from.
+	broker = "localhost:9092" // Kafka broker address.
+	topic  = "test_topic"     // Kafka topic to consume messages from.
 )
 
 // KafkaConsumer manages the consumption of messages from Kafka and broadcasting
@@ -20,6 +21,13 @@ const (
 type KafkaConsumer struct {
 	Cm       *client.ClientManager // ClientManager to broadcast messages to WebSocket clients.
 	Shutdown chan struct{}         // Channel to signal shutdown of the Kafka consumer.
+}
+
+// KafkaTestMessage is the structure of Kafka messages in the "test_topic" topic.
+type KafkaTestMessage struct {
+	ID        int     `json:"id"`
+	Message   string  `json:"content"`
+	Timestamp float64 `json:"timestamp"`
 }
 
 // StartKafkaConsumer starts the Kafka consumer that listens for messages on the
@@ -60,6 +68,14 @@ func (kc *KafkaConsumer) StartKafkaConsumer(wg *sync.WaitGroup) {
 		case msg := <-partitionConsumer.Messages():
 			message := string(msg.Value)
 			log.Printf("Received message: %s\n", message)
+
+			// Parse the Kafka message
+			var kafkaMsg KafkaTestMessage
+			err := json.Unmarshal(msg.Value, &kafkaMsg)
+			if err != nil {
+				log.Printf("Error unmarshalling Kafka message: %v", err)
+				continue
+			}
 
 			// Send message to connections
 			kc.Cm.BroadcastMessage(message)
