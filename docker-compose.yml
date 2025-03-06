@@ -36,6 +36,20 @@ services:
       postgres:
         condition: service_healthy
 
+  notification-service:
+    build:
+      context: ./services
+      dockerfile: NotificationService/Dockerfile
+    container_name: notification-service-container
+    ports:
+      - "8080:8080"
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_BROKER=kafka:29092
+    networks:
+      - microservices-network
+
   zookeeper:
     image: bitnami/zookeeper:latest
     hostname: zookeeper
