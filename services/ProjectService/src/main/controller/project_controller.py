@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from config.database import SessionLocal
-from service.project_service import create_project_service, get_project_service, delete_project_service
-from dtos.project_dto import ProjectCreateDTO
+from ..config.database import SessionLocal
+from ..service.project_service import create_project_service, get_project_service, delete_project_service
+from ..dtos.project_dto import ProjectCreateDTO
 from fastapi import HTTPException
 
 router = APIRouter()

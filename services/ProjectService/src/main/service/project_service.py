@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from repository.project_repository import create_project, get_project
-from dtos.project_dto import ProjectCreateDTO
+from ..repository.project_repository import create_project, get_project, delete_project
+from ..dtos.project_dto import ProjectCreateDTO
 from fastapi import HTTPException
 
 def create_project_service(db: Session, project_data: ProjectCreateDTO):

@@ -1,4 +1,4 @@
-from model.project import Project
+from ..model.project import Project
 from sqlalchemy.orm import Session
 
 def create_project(db: Session, project_data):
