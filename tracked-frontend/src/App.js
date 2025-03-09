@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile"; 
 import Projects from "./pages/Projects"; 
 import Tasks from "./pages/Tasks"; 
+import ProjectPage from "./pages/ProjectPage";
 import { AuthProvider, useAuth } from "./services/AuthContext"; 
 
 const ProtectedRoute = ({ element }) => {
@@ -31,8 +32,10 @@ function App() {
             <Route path="/login" element={<RedirectIfAuthenticated element={<Login />} />} />
 
             <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
-            <Route path="/projects" element={<ProtectedRoute element={<Projects />} />} />
+            <Route path="/projects" element={<Projects />} />
             <Route path="/tasks" element={<ProtectedRoute element={<Tasks />} />} />
+
+            <Route path="/projects/:id" element={<ProjectPage />} />
           </Routes>
         </Layout>
       </Router>
