@@ -1,4 +1,25 @@
+version: "2.1"
+
 services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=tracked
+      - POSTGRES_PASSWORD=eecs4314
+      - POSTGRES_DB=tracked_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tracked -d tracked_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   user-service:
     build:
       context: ./services
@@ -9,6 +30,9 @@ services:
       - user-data:/app/data
     networks:
       - microservices-network
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   zookeeper:
     image: bitnami/zookeeper:latest
@@ -59,3 +83,4 @@ volumes:
   user-data:
   zookeeper-data:
   kafka-data:
+  postgres-data:
