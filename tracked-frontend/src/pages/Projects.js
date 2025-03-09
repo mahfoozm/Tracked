@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../services/AuthContext"; 
 
 const Projects = () => {
@@ -49,7 +49,7 @@ const Projects = () => {
               {projects.map((project) => (
                 <div>
                   <li key={project.id} className="p-4 bg-gray-50 rounded-md shadow-sm hover:text-green-300"
-                   onClick={toProject}
+                   onClick={() => navigate(`/projects/${project.id}`)}
                    >
                     {project.name}
                   </li>
