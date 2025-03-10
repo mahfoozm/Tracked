@@ -9,8 +9,23 @@ def create_project(db: Session, project_data):
     return new_project
 
 def get_project(db: Session, project_id: int):
-    return db.query(Project).filter(Project.id == project_id).first()
+    project = db.query(Project).filter(Project.id == project_id).first()
+    return project  # ✅ Returns None if the project does not exist
 
 def delete_project(db: Session, project: Project):
     db.delete(project)
     db.commit()
+
+def update_project(db: Session, project_id: int, project_data: dict):
+    project = db.query(Project).filter(Project.id == project_id).first()
+
+    if not project:
+        return None
+
+    for key, value in project_data.items():
+        setattr(project, key, value)
+
+    db.commit()
+    db.refresh(project)
+
+    return project

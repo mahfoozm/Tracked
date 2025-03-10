@@ -3,5 +3,8 @@ from typing import Optional
 
 class ProjectCreateDTO(BaseModel):
     name: str
-    description: Optional[str]
-    lead_user_id: int
+    description: str
+    owner_id: int  # The owner must be an existing user
+
+    class Config:
+        orm_mode = True
