@@ -1,9 +1,12 @@
 package com.tracked.user.service;
 
+import com.tracked.kafka.config.TrackedKafkaTopic;
+import com.tracked.event.user.UserEvent;
 import com.tracked.user.dtos.LoginDto;
 import com.tracked.user.dtos.RegisterDto;
 import com.tracked.user.model.User;
 import com.tracked.user.repository.UserRepository;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,14 +20,18 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
 
+    private final KafkaTemplate<Integer, UserEvent> kafkaTemplate;
+
     public AuthService(
             UserRepository userRepository,
             AuthenticationManager authenticationManager,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            KafkaTemplate<Integer, UserEvent> kafkaTemplate
     ) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     public User signup(RegisterDto input) {
@@ -33,7 +40,21 @@ public class AuthService {
                 .setEmail(input.getEmail())
                 .setPassword(passwordEncoder.encode(input.getPassword()));
 
-        return userRepository.save(user);
+        user = userRepository.save(user);
+
+        this.kafkaTemplate.send(
+            TrackedKafkaTopic.USER_TOPIC,
+            user.getId(),
+            new UserEvent(
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
+            )
+        );
+
+        return user;
     }
 
     public User authenticate(LoginDto input) {
