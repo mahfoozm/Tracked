@@ -26,6 +26,8 @@ services:
       dockerfile: UserService/Dockerfile
     ports:
       - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     volumes:
       - user-data:/app/data
     networks:
