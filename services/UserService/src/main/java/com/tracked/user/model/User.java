@@ -76,6 +76,14 @@ public class User implements UserDetails {
         return this;
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
