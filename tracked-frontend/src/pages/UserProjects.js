@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../services/AuthContext"; 
 
-const Projects = () => {
+const UserProjects = () => {
   const { user } = useAuth();
   const [projects, setProjects] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,7 +34,7 @@ const Projects = () => {
   return (
     <div className="flex items-center justify-center w-full min-h-screen bg-gray-100">
       <div className="w-3/4 md:w-2/3 lg:w-1/2 h-[80vh] bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">
+        <h2 className="text-4xl font-extrabold text-center text-blue-600 mb-8">
           {user ? `${user}'s Projects` : "User's Projects"}
         </h2>
         <div className="mb-4">
@@ -71,4 +71,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default UserProjects;
