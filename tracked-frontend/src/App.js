@@ -5,8 +5,8 @@ import HomePage from "./pages/HomePage";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile"; 
-import Projects from "./pages/Projects"; 
-import Tasks from "./pages/Tasks"; 
+import UserProjects from "./pages/UserProjects"; 
+import UserTasks from "./pages/UserTasks"; 
 import ProjectPage from "./pages/ProjectPage";
 import TaskPage from "./pages/TaskPage";
 import { AuthProvider, useAuth } from "./services/AuthContext"; 
@@ -33,8 +33,8 @@ function App() {
             <Route path="/login" element={<RedirectIfAuthenticated element={<Login />} />} />
 
             <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/tasks" element={<ProtectedRoute element={<Tasks />} />} />
+            <Route path="/projects" element={<UserProjects />} />
+            <Route path="/tasks" element={<UserTasks />} />
 
             <Route path="/projects/:id" element={<ProjectPage />} />
             <Route path="/tasks/:id" element={<TaskPage />} />
