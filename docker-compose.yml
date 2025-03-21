@@ -38,8 +38,8 @@ services:
 
   notification-service:
     build:
-      context: ./services
-      dockerfile: NotificationService/Dockerfile
+      context: ./services/NotificationService
+      dockerfile: Dockerfile
     container_name: notification-service-container
     ports:
       - "8080:8080"
