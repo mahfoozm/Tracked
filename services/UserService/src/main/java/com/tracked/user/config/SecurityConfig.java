@@ -21,8 +21,8 @@ public class SecurityConfig {
     private final JwtFilter jwtAuthenticationFilter;
 
     public SecurityConfig(
-            JwtFilter jwtFilter,
-            AuthenticationProvider authenticationProvider
+        JwtFilter jwtFilter, 
+        AuthenticationProvider authenticationProvider
     ) {
         this.authenticationProvider = authenticationProvider;
         this.jwtAuthenticationFilter = jwtFilter;
@@ -31,33 +31,33 @@ public class SecurityConfig {
     @Bean
     @SuppressWarnings("removal") // Suppress deprecated warnings for now
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf()
-                .disable().authorizeHttpRequests()
-                .requestMatchers("/auth/login", "/auth/signup")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http
+            .cors() 
+            .and()
+            .csrf().disable()
+            .authorizeHttpRequests()
+            .requestMatchers("/auth/login", "/auth/signup").permitAll()
+            .anyRequest().authenticated()
+            .and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOrigins(List.of("http://localhost:8081"));
-        configuration.setAllowedMethods(List.of("GET","POST"));
-        configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
+        
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true); 
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        source.registerCorsConfiguration("/**",configuration);
-
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
