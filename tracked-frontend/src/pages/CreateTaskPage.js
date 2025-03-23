@@ -25,7 +25,7 @@ const CreateTaskPage = () => {
       <div className="w-3/4 md:w-2/3 lg:w-1/2 h-[80vh] bg-white p-8 rounded-lg shadow-lg">
         <div className="relative mb-12">
           <h2 className="text-4xl font-extrabold text-blue-600 text-center">
-            Create Project
+            Create Task
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg mb-6">
@@ -39,22 +39,44 @@ const CreateTaskPage = () => {
           />
 
           <div className="font-semibold text-gray-700">Part of:</div>
-          <input
-            type="text"
-            className="border rounded p-2 text-gray-900"
-            placeholder="Project Name"
-            value={projectName}
-            onChange={(e) => setProjectName(e.target.value)}
-          />
+          <div className="h-32 overflow-y-auto border rounded p-2 flex flex-wrap gap-2">
+            {['Nexus','Five Night', 'C5', 'Project D', 'LongBox', 'Wizard', 'DC', 'The Name', 'Crimson Empire', 'Dark Pheonix', 'Rogue Squadron', 'Fate'].map((name) => (
+              <button
+                key={name}
+                type="button"
+                className={`px-4 py-1 rounded-full border transition text-sm ${
+                  projectName === name
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-white text-gray-700 border-gray-300'
+                }`}
+                onClick={() =>
+                  setProjectName((prev) => (prev === name ? '' : name))
+                }
+              >
+                {name}
+              </button>
+            ))}
+          </div>
 
           <div className="font-semibold text-gray-700">Assignee:</div>
-          <input
-            type="text"
-            className="border rounded p-2 text-gray-900"
-            placeholder="Assignee Name"
-            value={assignee}
-            onChange={(e) => setAssignee(e.target.value)}
-          />
+          <div className="h-32 overflow-y-auto border rounded p-2 flex flex-wrap gap-2">
+            {['Alice', 'Bob', 'Charlie', 'Dana', 'Eli', 'Fred', 'Gerry', 'Henry', 'Ines', 'Jack', 'Kelvin', 'Lawrance',' Mikey', 'Nicole', 'Oscar', 'Penny', 'Quan'].map((name) => (
+              <button
+                key={name}
+                type="button"
+                className={`px-4 py-1 rounded-full border transition text-sm ${
+                  assignee === name
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-white text-gray-700 border-gray-300'
+                }`}
+                onClick={() =>
+                  setAssignee((prev) => (prev === name ? '' : name))
+                }
+              >
+                {name}
+              </button>
+            ))}
+          </div>
 
           <div className="font-semibold text-gray-700">Due Date:</div>
           <input

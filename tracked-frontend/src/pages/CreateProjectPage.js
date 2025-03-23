@@ -3,13 +3,13 @@ import React, { useState } from "react";
 const CreateProjectPage = () => {
 
   const [projectName, setProjectName] = useState('');
-  const [ownerName, setOwnerName] = useState('');
+  const [membersNames, setMembersNames] = useState([]);
   const [description, setDescription] = useState('');
 
   const handleSubmit = () => {
     const projectData = {
       projectName,
-      ownerName,
+      members: membersNames,
       description,
     };
 
@@ -25,6 +25,7 @@ const CreateProjectPage = () => {
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg mb-6">
+
           <div className="font-semibold text-gray-700">Project Name:</div>
           <input
             type="text"
@@ -34,14 +35,29 @@ const CreateProjectPage = () => {
             onChange={(e) => setProjectName(e.target.value)}
           />
 
-          <div className="font-semibold text-gray-700">Owner Name:</div>
-          <input
-            type="text"
-            className="border rounded p-2 text-gray-900"
-            placeholder="Owner Name"
-            value={ownerName}
-            onChange={(e) => setOwnerName(e.target.value)}
-          />
+          <div className="font-semibold text-gray-700">Members:</div>
+          <div className="h-32 overflow-y-auto border rounded p-2 flex flex-wrap gap-2">
+            {['Alice', 'Bob', 'Charlie', 'Dana', 'Eli', 'Fred', 'Gerry', 'Henry', 'Ines', 'Jack', 'Kelvin', 'Lawrance',' Mikey', 'Nicole', 'Oscar', 'Penny', 'Quan'].map((name) => (
+              <button
+                key={name}
+                type="button"
+                className={`px-4 py-1 rounded-full border transition text-sm ${
+                  membersNames.includes(name)
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-white text-gray-700 border-gray-300'
+                }`}
+                onClick={() => {
+                  setMembersNames((prev) =>
+                    prev.includes(name)
+                      ? prev.filter((n) => n !== name)
+                      : [...prev, name]
+                  );
+                }}
+              >
+                {name}
+              </button>
+            ))}
+          </div>
 
           <div className="font-semibold text-gray-700">Description:</div>
           <textarea
@@ -52,7 +68,7 @@ const CreateProjectPage = () => {
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
-        <div className="flex-grow" />
+
         <div className="flex justify-center">
           <button
             onClick={handleSubmit}
@@ -60,7 +76,8 @@ const CreateProjectPage = () => {
           >
             Create Project
           </button>
-        </div>   
+        </div>
+
       </div>
     </div>
   );
