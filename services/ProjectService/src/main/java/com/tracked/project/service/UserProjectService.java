@@ -8,17 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class UserTeamService {
+public class UserProjectService {
 
-    private final UserProjectRepository userTeamRepository;
+    private final UserProjectRepository userProjectRepository;
 
-    public UserTeamService(UserProjectRepository userTeamRepository) {
-        this.userTeamRepository = userTeamRepository;
+    public UserProjectService(UserProjectRepository userProjectRepository) {
+        this.userProjectRepository = userProjectRepository;
     }
 
-    public List<Integer> teamMembers(Integer teamId) {
+    public List<Integer> projectMembers(Integer teamId) {
         List<Integer> members = new ArrayList<>();
-        List<UserProjectTable> query = userTeamRepository.findAllByTeamId(teamId);
+        List<UserProjectTable> query = userProjectRepository.findAllByProjectId(teamId);
         for (int i = 0; i < query.size(); i++) {
             members.add(query.get(i).getUserId());
         }
@@ -27,7 +27,7 @@ public class UserTeamService {
 
     public List<Integer> usersTeams(Integer userId) {
         List<Integer> teams = new ArrayList<>();
-        List<UserProjectTable> query = userTeamRepository.findAllByUserId(userId);
+        List<UserProjectTable> query = userProjectRepository.findAllByUserId(userId);
         for (int i = 0; i < query.size(); i++) {
             teams.add(query.get(i).getProjectId());
         }

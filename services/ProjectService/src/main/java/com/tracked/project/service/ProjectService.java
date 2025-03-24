@@ -7,16 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class TeamService {
-    private final ProjectRepository teamRepository;
+public class ProjectService {
+    private final ProjectRepository projectRepository;
 
-    public TeamService(ProjectRepository teamRepository) {
-        this.teamRepository = teamRepository;
+    public ProjectService(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
     }
 
-    public List<Project> allTeams() {
+    public List<Project> allProjects() {
         List<Project> teams = new ArrayList<>();
-        teamRepository.findAll().forEach(teams::add);
+        projectRepository.findAll().forEach(teams::add);
         return teams;
     }
 }
