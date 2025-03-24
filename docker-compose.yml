@@ -36,6 +36,22 @@ services:
       postgres:
         condition: service_healthy
 
+  task-service:
+    build:
+      context: ./services
+      dockerfile: TaskService/Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    volumes:
+      - user-data:/app/data
+    networks:
+      - microservices-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   notification-service:
     build:
       context: ./services/NotificationService
