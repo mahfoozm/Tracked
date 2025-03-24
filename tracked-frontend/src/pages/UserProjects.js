@@ -8,6 +8,10 @@ const UserProjects = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate(); 
 
+  const handleClick = () => {
+    navigate("/create_project"); 
+  };
+
   useEffect(() => {
     if (!user) {
       setProjects([
@@ -34,9 +38,16 @@ const UserProjects = () => {
   return (
     <div className="flex items-center justify-center w-full min-h-screen bg-gray-100">
       <div className="w-3/4 md:w-2/3 lg:w-1/2 h-[80vh] bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-4xl font-extrabold text-center text-blue-600 mb-8">
-          {user ? `${user}'s Projects` : "User's Projects"}
-        </h2>
+        <div className="relative mb-4">
+          <h2 className="text-4xl font-extrabold text-blue-600 text-center">
+            {user ? `${user}'s Projects` : "User's Projects"}
+          </h2>
+          <button 
+            onClick={handleClick}
+            className="absolute right-0 top-1/2 -translate-y-1/2 bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-200">
+            Create Project
+          </button>
+        </div>
         <div className="mb-4">
           <input 
             type="text" 
