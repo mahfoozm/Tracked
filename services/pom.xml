@@ -16,7 +16,7 @@
     <modules>
         <module>UserService</module>
         <module>TaskService</module>
-        <module>TeamService</module>
+        <module>ProjectService</module>
     </modules>
 
     <properties>

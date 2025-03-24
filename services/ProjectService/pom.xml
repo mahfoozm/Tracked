@@ -9,7 +9,7 @@
         <relativePath>../pom.xml</relativePath>
 	</parent>
 	<groupId>com.tracked</groupId>
-	<artifactId>team</artifactId>
+	<artifactId>project</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>team</name>
 	<description>Team service for Tracked</description>
