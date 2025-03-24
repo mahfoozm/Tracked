@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Example</title>
+</head>
+<body>
+    <h2>WebSocket Connection</h2>
+    <button id="connect-button">Connect</button>
+    <button id="disconnect-button">Disconnect</button>
+    <div id="output"></div>
+    <script>
+        const connectButton = document.getElementById("connect-button");
+        const disConnectButton = document.getElementById("disconnect-button");
+
+        disConnectButton.disabled = true;
+
+        let socket;
+
+        connectButton.addEventListener("click", () => {
+            if (socket) {
+                console.log("Already connected");
+                return;
+            }
+
+            socket = new WebSocket("ws://localhost:8080/ws");
+
+            socket.onopen = function () {
+                console.log("Connected to WebSocket server");
+                connectButton.disabled = true;
+                disConnectButton.disabled = false;
+            };
+
+            socket.onmessage = function (event) {
+                document.getElementById("output").innerText += "\n" + event.data;
+            };
+
+            socket.onerror = function (error) {
+                console.log("WebSocket Error:", error);
+            };
+
+            socket.onclose = function () {
+                console.log("WebSocket connection closed");
+                connectButton.disabled = false;
+                disConnectButton.disabled = true;
+                socket = null;
+            };
+        });
+
+        disConnectButton.addEventListener("click", () => {
+            console.log("hee");
+            console.log(socket);
+            if (socket) {
+                console.log("test");
+                socket.close();
+            }
+        });
+    </script>
+</body>
+</html>

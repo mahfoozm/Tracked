@@ -7,5 +7,14 @@
     <file url="file://$PROJECT_DIR$/TeamService/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/UserService/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/UserService/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/JavaLibrary/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/JavaLibrary/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/TaskService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/TaskService/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/TeamService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/TeamService/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/UserService/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/src/main/resources" charset="UTF-8" />
   </component>
 </project>
