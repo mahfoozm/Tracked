@@ -21,8 +21,8 @@ const CreateTaskPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center w-full min-h-screen bg-gray-100">
-      <div className="w-3/4 md:w-2/3 lg:w-1/2 h-[80vh] bg-white p-8 rounded-lg shadow-lg">
+    <div className="flex items-center justify-center w-full min-h-screen bg-gray-100 py-8">
+      <div className="w-3/4 md:w-2/3 lg:w-1/2 bg-white p-8 rounded-lg shadow-lg">
         <div className="relative mb-12">
           <h2 className="text-4xl font-extrabold text-blue-600 text-center">
             Create Task
@@ -90,7 +90,7 @@ const CreateTaskPage = () => {
           <div className="font-semibold text-gray-700">Description:</div>
           <textarea
             rows="4"
-            className="border rounded p-2 text-gray-900 md:col-span-1"
+            className="border rounded p-2 text-gray-900 col-span-full"
             placeholder="Enter a description..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
