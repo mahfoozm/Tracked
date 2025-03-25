@@ -50,3 +50,24 @@ export const isAuthenticated = () => {
   const token = localStorage.getItem("token");
   return !!token; 
 };
+
+export const getCurrentUser = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token found");
+
+  const response = await fetch(`${API_BASE_URL}/users/me`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to fetch user data.");
+  }
+
+  return await response.json();
+};
+
