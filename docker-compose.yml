@@ -26,6 +26,24 @@ services:
       dockerfile: UserService/Dockerfile
     ports:
       - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    volumes:
+      - user-data:/app/data
+    networks:
+      - microservices-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  task-service:
+    build:
+      context: ./services
+      dockerfile: TaskService/Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
     volumes:
       - user-data:/app/data
     networks:
@@ -36,8 +54,8 @@ services:
 
   notification-service:
     build:
-      context: ./services
-      dockerfile: NotificationService/Dockerfile
+      context: ./services/NotificationService
+      dockerfile: Dockerfile
     container_name: notification-service-container
     ports:
       - "8080:8080"
@@ -81,6 +99,9 @@ services:
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
       - KAFKA_CFG_NUM_PARTITIONS=1
       - KAFKA_CFG_DEFAULT_REPLICATION_FACTOR=1
+      - KAFKA_CFG_LOG_RETENTION_MS=-1
+      - KAFKA_CFG_LOG_RETENTION_BYTES=-1
+      - KAFKA_CFG_LOG_CLEANUP_POLICY=compact
     volumes:
       - kafka-data:/bitnami/kafka
     networks:

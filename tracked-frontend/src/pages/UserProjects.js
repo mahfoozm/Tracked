@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../services/AuthContext"; 
 
-const Projects = () => {
+const UserProjects = () => {
   const { user } = useAuth();
   const [projects, setProjects] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate(); 
 
-  const toProject = (e) => {
-      navigate("/profile"); 
+  const handleClick = () => {
+    navigate("/create_project"); 
   };
 
   useEffect(() => {
@@ -30,26 +31,41 @@ const Projects = () => {
     }
   }, [user]);
 
+  const searchProjects = projects.filter(project =>
+    project.name.toLowerCase().includes(searchQuery.toLowerCase())
+);
+
   return (
-    <div className="flex items-center justify-center w-full min-h-screen bg-gray-100">
-      <div className="w-3/4 md:w-2/3 lg:w-1/2 h-[80vh] bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">
-          {user ? `${user}'s Projects` : "User's Projects"}
-        </h2>
+    <div className="flex items-center justify-center w-full min-h-screen bg-gray-100 py-8">
+      <div className="w-3/4 md:w-2/3 lg:w-1/2 bg-white p-8 rounded-lg shadow-lg">
+        <div className="relative mb-4">
+          <h2 className="text-4xl font-extrabold text-blue-600 text-center">
+            {user ? `${user}'s Projects` : "User's Projects"}
+          </h2>
+          <button 
+            onClick={handleClick}
+            className="absolute right-0 top-1/2 -translate-y-1/2 bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-gray-200">
+            Create Project
+          </button>
+        </div>
         <div className="mb-4">
           <input 
             type="text" 
             placeholder="Search projects..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div className="h-[61vh] overflow-y-auto border border-gray-200 rounded-md p-4">
-          {projects.length > 0 ? (
+          {searchProjects.length > 0 ? (
             <ul className="space-y-3">
-              {projects.map((project) => (
+              {searchProjects.map((project) => (
                 <div>
-                  <li key={project.id} className="p-4 bg-gray-50 rounded-md shadow-sm hover:text-green-300"
-                   onClick={() => navigate(`/projects/${project.id}`)}
+                  <li 
+                    key={project.id} 
+                    className="p-4 bg-gray-50 rounded-md shadow-sm hover:text-green-300"
+                    onClick={() => navigate(`/projects/${project.id}`)}
                    >
                     {project.name}
                   </li>
@@ -58,7 +74,7 @@ const Projects = () => {
               ))}
             </ul>
           ) : (
-            <p className="text-center text-gray-500">No projects assigned</p>
+            <p className="text-center text-gray-500">No projects assigned :(</p>
           )}
         </div>
       </div>
@@ -66,4 +82,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default UserProjects;

@@ -5,10 +5,10 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the JAR file from the build stage
-COPY /UserService/target/*.jar app.jar
+COPY /TaskService/target/*.jar app.jar
 
 # Expose the port for the server to run on
-EXPOSE 8081
+EXPOSE 8082
 
 # Run the Spring Boot application
 ENTRYPOINT ["java", "-jar", "app.jar"]
