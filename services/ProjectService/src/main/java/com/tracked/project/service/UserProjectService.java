@@ -25,7 +25,7 @@ public class UserProjectService {
         return members;
     }
 
-    public List<Integer> usersTeams(Integer userId) {
+    public List<Integer> usersProjects(Integer userId) {
         List<Integer> teams = new ArrayList<>();
         List<UserProjectTable> query = userProjectRepository.findAllByUserId(userId);
         for (int i = 0; i < query.size(); i++) {

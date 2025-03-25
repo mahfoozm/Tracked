@@ -30,6 +30,11 @@ public class Project {
         return id;
     }
 
+    public Project setId(int id) {
+        this.id = id;
+        return this;
+    }
+
     public String getName() { return name;}
 
     public Project setName(String name) {
