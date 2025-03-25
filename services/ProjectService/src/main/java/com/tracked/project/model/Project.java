@@ -1,17 +1,14 @@
-package com.tracked.team.model;
+package com.tracked.project.model;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-@Table(name = "teams")
-public class Team {
+@Table(name = "projects")
+public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,9 +30,14 @@ public class Team {
         return id;
     }
 
+    public Project setId(int id) {
+        this.id = id;
+        return this;
+    }
+
     public String getName() { return name;}
 
-    public Team setName(String name) {
+    public Project setName(String name) {
         this.name = name;
         return this;
     }

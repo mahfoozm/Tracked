@@ -1,13 +1,13 @@
-package com.tracked.team;
+package com.tracked.project;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TeamApplication {
+public class ProjectApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TeamApplication.class, args);
+		SpringApplication.run(ProjectApplication.class, args);
 	}
 
 }

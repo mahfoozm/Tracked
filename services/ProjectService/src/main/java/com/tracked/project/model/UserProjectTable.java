@@ -1,27 +1,27 @@
-package com.tracked.team.model;
+package com.tracked.project.model;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "userTeamTable")
-public class UserTeamTable {
+@Table(name = "userProjectTable")
+public class UserProjectTable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
     private Integer id; // This will probably not get used
 
     @Column(nullable = false)
-    private Integer teamId;
+    private Integer projectId;
 
     @Column(nullable = false)
     private Integer userId;
 
-    public Integer getTeamId() {
-        return teamId;
+    public Integer getProjectId() {
+        return projectId;
     }
 
-    public void setTeamId(Integer teamId) {
-        this.teamId = teamId;
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
     }
 
     public Integer getUserId() {
