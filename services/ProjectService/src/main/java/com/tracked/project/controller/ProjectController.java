@@ -20,22 +20,22 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    public Project getProjectById(@PathVariable Integer projectID) {
-        return projectService.getProjectById(projectID);
+    public Project getProjectById(@PathVariable Integer id) {
+        return projectService.getProjectById(id);
     }
 
-    @GetMapping("/{id}")
-    public List<Integer> getProjectsByUserId(@PathVariable Integer userID) {
-        return userProjectService.usersProjects(userID);
+    @GetMapping("/user/{id}")
+    public List<Integer> getProjectsByUserId(@PathVariable Integer id) {
+        return userProjectService.usersProjects(id);
     }
 
-    @GetMapping("/{id}")
-    public List<Integer> getProjectsUsers(@PathVariable Integer projectID) {
-        return userProjectService.projectMembers(projectID);
+    @GetMapping("/users/{id}")
+    public List<Integer> getProjectsUsers(@PathVariable Integer id) {
+        return userProjectService.projectMembers(id);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public void createProject(@RequestBody ProjectDto projectDto) {
-        Project newProject = projectService.createProject(projectDto);
+        projectService.createProject(projectDto);
     }
 }

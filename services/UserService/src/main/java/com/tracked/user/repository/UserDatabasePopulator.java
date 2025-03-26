@@ -19,7 +19,6 @@ public class UserDatabasePopulator {
     private static final Logger logger = LoggerFactory.getLogger(UserDatabasePopulator.class);
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final List<User> initialUsers;
     private final KafkaTemplate<Integer, UserEvent> kafkaTemplate;
 
@@ -30,11 +29,12 @@ public class UserDatabasePopulator {
         KafkaTemplate<Integer, UserEvent> kafkaTemplate
     ) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        User user1 = new User()
-                .setFullName("Mohammad")
-                .setEmail("mohammadmahfoozpersonal@gmail.com")
-                .setPassword(passwordEncoder.encode("test123"));
+        User user1 = User.builder()
+                .id(1)
+                .fullName("Mohammad")
+                .email("mohammadmahfoozpersonal@gmail.com")
+                .password(passwordEncoder.encode("test123"))
+                .build();
         this.initialUsers = new ArrayList<>();
         this.initialUsers.add(user1);
         this.kafkaTemplate = kafkaTemplate;

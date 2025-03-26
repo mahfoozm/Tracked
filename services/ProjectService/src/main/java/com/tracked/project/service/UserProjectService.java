@@ -29,7 +29,7 @@ public class UserProjectService {
         List<Integer> teams = new ArrayList<>();
         List<UserProjectTable> query = userProjectRepository.findAllByUserId(userId);
         for (int i = 0; i < query.size(); i++) {
-            teams.add(query.get(i).getProjectId());
+            teams.add(query.get(i).getProject().getId());
         }
         return teams;
     }

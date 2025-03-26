@@ -1,6 +1,7 @@
 package com.tracked.event.user;
 
 import com.tracked.cache.EventCache;
+import com.tracked.kafka.config.TrackedKafkaGroupId;
 import com.tracked.kafka.config.TrackedKafkaTopic;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ public class UserEventStore {
 
     private final Map<Integer, UserEvent> userDatabase = new EventCache<>(1000);
 
-    @KafkaListener(topics = TrackedKafkaTopic.USER_TOPIC, groupId = "user-group")
+    @KafkaListener(topics = TrackedKafkaTopic.USER_TOPIC, groupId = TrackedKafkaGroupId.USER_GROUP)
     public void listen(ConsumerRecord<Integer, UserEvent> record, Acknowledgment ack) {
         logger.info("Received user event: {}", record.value().getEmail());
         this.userDatabase.put(record.key(), record.value());

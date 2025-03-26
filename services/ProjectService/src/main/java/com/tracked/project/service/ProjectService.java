@@ -36,10 +36,9 @@ public class ProjectService {
     }
 
     public Project createProject(ProjectDto input) {
-        Project project = new Project()
-                .setName(input.getName())
-                .setId(input.getId())
-                ;
+        Project project = Project.builder()
+            .name(input.getName())
+            .build();
         return project;
     }
 }

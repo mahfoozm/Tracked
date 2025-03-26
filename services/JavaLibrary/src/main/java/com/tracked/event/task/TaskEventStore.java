@@ -1,6 +1,7 @@
 package com.tracked.event.task;
 
 import com.tracked.cache.EventCache;
+import com.tracked.kafka.config.TrackedKafkaGroupId;
 import com.tracked.kafka.config.TrackedKafkaTopic;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ public class TaskEventStore {
 
     private final Map<Integer, TaskEvent> taskDatabase = new EventCache<>(1000);
 
-    @KafkaListener(topics = TrackedKafkaTopic.TASK_TOPIC, groupId = "task-group")
+    @KafkaListener(topics = TrackedKafkaTopic.TASK_TOPIC, groupId = TrackedKafkaGroupId.TASK_GROUP)
     public void listen(ConsumerRecord<Integer, TaskEvent> record, Acknowledgment ack) {
         logger.info("Received task event: {}", record.value().getId());
         this.taskDatabase.put(record.key(), record.value());
