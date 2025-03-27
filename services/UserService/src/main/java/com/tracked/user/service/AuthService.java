@@ -35,10 +35,11 @@ public class AuthService {
     }
 
     public User signup(RegisterDto input) {
-        User user = new User()
-                .setFullName(input.getFullName())
-                .setEmail(input.getEmail())
-                .setPassword(passwordEncoder.encode(input.getPassword()));
+        User user = User.builder()
+                .fullName(input.getFullName())
+                .email(input.getEmail())
+                .password(passwordEncoder.encode(input.getPassword()))
+                .build();
 
         user = userRepository.save(user);
 

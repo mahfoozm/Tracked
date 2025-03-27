@@ -9,6 +9,8 @@ import UserProjects from "./pages/UserProjects";
 import UserTasks from "./pages/UserTasks"; 
 import ProjectPage from "./pages/ProjectPage";
 import TaskPage from "./pages/TaskPage";
+import CreateProjectPage from "./pages/CreateProjectPage";
+import CreateTaskPage from "./pages/CreateTaskPage";
 import { AuthProvider, useAuth } from "./services/AuthContext"; 
 
 const ProtectedRoute = ({ element }) => {
@@ -38,6 +40,10 @@ function App() {
 
             <Route path="/projects/:id" element={<ProjectPage />} />
             <Route path="/tasks/:id" element={<TaskPage />} />
+
+            <Route path="/create_project" element={<CreateProjectPage />} />
+            <Route path="/create_task" element={<CreateTaskPage />} />
+
           </Routes>
         </Layout>
       </Router>
