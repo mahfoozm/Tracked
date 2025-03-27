@@ -18,7 +18,9 @@ public class TaskEvent {
     private int id;
     private String name;
     private Integer projectId;
+    private Integer creatorUserId;
     private Integer assigneeUserId;
+    private String status;
     private LocalDate startDate;
     private LocalDate endDate;
     private LocalDate createdAt;

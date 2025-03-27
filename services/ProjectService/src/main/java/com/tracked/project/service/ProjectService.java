@@ -1,7 +1,6 @@
 package com.tracked.project.service;
 
 import com.tracked.event.project.ProjectEvent;
-import com.tracked.event.user.UserEvent;
 import com.tracked.event.user.UserEventStore;
 import com.tracked.kafka.config.TrackedKafkaTopic;
 import com.tracked.project.dtos.ProjectDto;
@@ -19,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -27,7 +25,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final UserProjectRepository userProjectRepository;
     private final UserEventStore userEventStore;
-    private KafkaTemplate<Integer, ProjectEvent> kafkaTemplate;
+    private final KafkaTemplate<Integer, ProjectEvent> kafkaTemplate;
 
     @Autowired
     public ProjectService(

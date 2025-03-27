@@ -33,7 +33,9 @@ public class TaskDatabasePopulator {
             .id(1)
             .name("Finish Project")
             .projectId(1)
+            .creatorUserId(1)
             .assigneeUserId(1)
+            .status(Task.Status.NOT_STARTED)
             .startDate(LocalDate.now())
             .endDate(LocalDate.now().plusDays(1))
             .build();
@@ -41,7 +43,9 @@ public class TaskDatabasePopulator {
             .id(2)
             .name("Finish Report")
             .projectId(1)
+            .creatorUserId(1)
             .assigneeUserId(1)
+            .status(Task.Status.IN_PROGRESS)
             .startDate(LocalDate.now())
             .endDate(LocalDate.now().plusDays(1))
             .build();
@@ -62,16 +66,7 @@ public class TaskDatabasePopulator {
                 this.kafkaTemplate.send(
                     TrackedKafkaTopic.TASK_TOPIC,
                     task.getId(),
-                    new TaskEvent(
-                        task.getId(),
-                        task.getName(),
-                        task.getProjectId(),
-                        task.getAssigneeUserId(),
-                        task.getStartDate(),
-                        task.getEndDate(),
-                        task.getCreatedAt(),
-                        task.getUpdatedAt()
-                    )
+                    task.toTaskEvent()
                 );
                 logger.info("Sent task {} to Kafka", task.getId());
             }
