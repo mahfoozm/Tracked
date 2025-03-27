@@ -1,5 +1,6 @@
 package com.tracked.project.controller;
 
+import com.tracked.event.user.UserEvent;
 import com.tracked.project.dtos.ProjectDto;
 import com.tracked.project.model.Project;
 import com.tracked.project.service.ProjectService;
@@ -19,6 +20,11 @@ public class ProjectController {
         this.userProjectService = userProjectService;
     }
 
+    @GetMapping("")
+    public List<Project> getAllProjects() {
+        return projectService.allProjects();
+    }
+
     @GetMapping("/{id}")
     public Project getProjectById(@PathVariable Integer id) {
         return projectService.getProjectById(id);
@@ -29,8 +35,13 @@ public class ProjectController {
         return userProjectService.usersProjects(id);
     }
 
-    @GetMapping("/users/{id}")
-    public List<Integer> getProjectsUsers(@PathVariable Integer id) {
+    @PostMapping("/{projectId}/user/{userId}")
+    public void addUserToProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
+        this.projectService.addUserToProject(projectId, userId);
+    }
+
+    @GetMapping("/{id}/users")
+    public List<UserEvent> getProjectsUsers(@PathVariable Integer id) {
         return userProjectService.projectMembers(id);
     }
 
@@ -38,4 +49,5 @@ public class ProjectController {
     public void createProject(@RequestBody ProjectDto projectDto) {
         projectService.createProject(projectDto);
     }
+
 }

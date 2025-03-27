@@ -1,12 +1,13 @@
 package com.tracked.project;
 
 import com.tracked.event.project.ProjectSharedConfigReference;
+import com.tracked.event.user.UserSharedConfigReference;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
-@Import(ProjectSharedConfigReference.class)
+@Import({ProjectSharedConfigReference.class, UserSharedConfigReference.class})
 public class ProjectApplication {
 
 	public static void main(String[] args) {

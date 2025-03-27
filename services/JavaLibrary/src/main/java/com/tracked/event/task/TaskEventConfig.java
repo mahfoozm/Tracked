@@ -32,25 +32,25 @@ public class TaskEventConfig {
         return this.commonKafkaConfigs;
     }
 
-    @Bean
+    @Bean("taskKafkaConsumerFactory")
     public ConsumerFactory<Integer, TaskEvent> consumerFactory() {
         logger.info("Creating task event consumer factory");
         return this.commonKafkaConfigs().consumerFactory();
     }
 
-    @Bean
+    @Bean("taskKafkaListenerContainerFactory")
     public ConcurrentKafkaListenerContainerFactory<Integer, TaskEvent> kafkaListenerContainerFactory() {
         logger.info("Creating task event listener container factory");
         return this.commonKafkaConfigs().kafkaListenerContainerFactory();
     }
 
-    @Bean
+    @Bean("taskKafkaProducerFactory")
     public ProducerFactory<Integer, TaskEvent> producerFactory() {
         logger.info("Creating task event producer factory");
         return this.commonKafkaConfigs().producerFactory();
     }
 
-    @Bean
+    @Bean("taskKafkaTemplate")
     public KafkaTemplate<Integer, TaskEvent> kafkaTemplate() {
         logger.info("Creating task event kafka template");
         return this.commonKafkaConfigs().kafkaTemplate();

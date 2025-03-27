@@ -22,7 +22,7 @@ public class ProjectEventStore {
 
     private final Map<Integer, ProjectEvent> projectDatabase = new EventCache<>(1000);
 
-    @KafkaListener(topics = TrackedKafkaTopic.PROJECT_TOPIC, groupId = TrackedKafkaGroupId.PROJECT_GROUP)
+    @KafkaListener(topics = TrackedKafkaTopic.PROJECT_TOPIC, groupId = TrackedKafkaGroupId.PROJECT_GROUP, containerFactory = "projectKafkaListenerContainerFactory")
     public void listen(ConsumerRecord<Integer, ProjectEvent> record, Acknowledgment ack) {
         logger.info("Received project event: {}", record.value().getId());
         this.projectDatabase.put(record.key(), record.value());

@@ -34,25 +34,25 @@ public class ProjectEventConfig {
         return this.commonKafkaConfigs;
     }
 
-    @Bean
+    @Bean("projectKafkaConsumerFactory")
     public ConsumerFactory<Integer, ProjectEvent> consumerFactory() {
         logger.info("Creating project event consumer factory");
         return this.commonKafkaConfigs().consumerFactory();
     }
 
-    @Bean
+    @Bean("projectKafkaListenerContainerFactory")
     public ConcurrentKafkaListenerContainerFactory<Integer, ProjectEvent> kafkaListenerContainerFactory() {
         logger.info("Creating project event listener container factory");
         return this.commonKafkaConfigs().kafkaListenerContainerFactory();
     }
 
-    @Bean
+    @Bean("projectKafkaProducerFactory")
     public ProducerFactory<Integer, ProjectEvent> producerFactory() {
         logger.info("Creating project event producer factory");
         return this.commonKafkaConfigs().producerFactory();
     }
 
-    @Bean
+    @Bean("projectKafkaTemplate")
     public KafkaTemplate<Integer, ProjectEvent> kafkaTemplate() {
         logger.info("Creating project event kafka template");
         return this.commonKafkaConfigs().kafkaTemplate();

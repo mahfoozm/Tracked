@@ -34,25 +34,25 @@ public class UserEventConfig {
         return this.commonKafkaConfigs;
     }
 
-    @Bean
+    @Bean("userKafkaConsumerFactory")
     public ConsumerFactory<Integer, UserEvent> consumerFactory() {
         logger.info("Creating user event consumer factory");
         return this.commonKafkaConfigs().consumerFactory();
     }
 
-    @Bean
+    @Bean("userKafkaListenerContainerFactory")
     public ConcurrentKafkaListenerContainerFactory<Integer, UserEvent> kafkaListenerContainerFactory() {
         logger.info("Creating user event listener container factory");
         return this.commonKafkaConfigs().kafkaListenerContainerFactory();
     }
 
-    @Bean
+    @Bean("userKafkaProducerFactory")
     public ProducerFactory<Integer, UserEvent> producerFactory() {
         logger.info("Creating user event producer factory");
         return this.commonKafkaConfigs().producerFactory();
     }
 
-    @Bean
+    @Bean("userKafkaTemplate")
     public KafkaTemplate<Integer, UserEvent> kafkaTemplate() {
         logger.info("Creating user event kafka template");
         return this.commonKafkaConfigs().kafkaTemplate();

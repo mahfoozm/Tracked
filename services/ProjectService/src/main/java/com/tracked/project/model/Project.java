@@ -3,6 +3,7 @@ package com.tracked.project.model;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,5 +39,6 @@ public class Project {
     private Date updatedAt;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<UserProjectTable> userProjectTables;
 }

@@ -21,7 +21,7 @@ public class TaskEventStore {
 
     private final Map<Integer, TaskEvent> taskDatabase = new EventCache<>(1000);
 
-    @KafkaListener(topics = TrackedKafkaTopic.TASK_TOPIC, groupId = TrackedKafkaGroupId.TASK_GROUP)
+    @KafkaListener(topics = TrackedKafkaTopic.TASK_TOPIC, groupId = TrackedKafkaGroupId.TASK_GROUP, containerFactory = "taskKafkaListenerContainerFactory")
     public void listen(ConsumerRecord<Integer, TaskEvent> record, Acknowledgment ack) {
         logger.info("Received task event: {}", record.value().getId());
         this.taskDatabase.put(record.key(), record.value());

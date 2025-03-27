@@ -1,5 +1,6 @@
 package com.tracked.project.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,5 +26,6 @@ public class UserProjectTable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "project_id", nullable = false)
+    @JsonBackReference
     private Project project;
 }
