@@ -1,0 +1,13 @@
+com\tracked\project\service\ProjectService.class
+com\tracked\project\repository\ProjectDatabasePopulator.class
+com\tracked\project\dtos\ProjectDto.class
+com\tracked\project\model\UserProjectTable$UserProjectTableBuilder.class
+com\tracked\project\model\UserProjectTable.class
+com\tracked\project\config\SecurityConfig.class
+com\tracked\project\controller\ProjectController.class
+com\tracked\project\model\Project$ProjectBuilder.class
+com\tracked\project\service\UserProjectService.class
+com\tracked\project\ProjectApplication.class
+com\tracked\project\repository\UserProjectRepository.class
+com\tracked\project\model\Project.class
+com\tracked\project\repository\ProjectRepository.class

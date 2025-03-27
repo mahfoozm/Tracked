@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import useWebSocket from "react-use-websocket";
 import { useNavigate } from "react-router-dom";
+<<<<<<< Updated upstream
 import { useAuth } from "../services/AuthContext"; 
+=======
+import { useAuth } from "../services/AuthContext";
+>>>>>>> Stashed changes
 import defaultProfileImage from "../assets/images/default-profile.png";
 
 const WEBSOCKET_BASE_URL = "localhost:8080";
@@ -9,13 +13,22 @@ const WEBSOCKET_BASE_URL = "localhost:8080";
 const Profile = () => {
   const socketUrl = `ws://${WEBSOCKET_BASE_URL}/ws`;
   const navigate = useNavigate();
+<<<<<<< Updated upstream
   const { logoutUser } = useAuth(); 
+=======
+  const { logoutUser } = useAuth();
+
+>>>>>>> Stashed changes
   const [messages, setMessages] = useState([]);
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
   const [profileImage, setProfileImage] = useState(defaultProfileImage);
   const [selectedFileName, setSelectedFileName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+<<<<<<< Updated upstream
+=======
+  const [hasChanges, setHasChanges] = useState(false);
+>>>>>>> Stashed changes
   const [editedFields, setEditedFields] = useState({});
 
   const fileInputRef = useRef(null);
@@ -53,6 +66,17 @@ const Profile = () => {
           fullName: data.fullName || "",
           email: data.email || "",
         });
+<<<<<<< Updated upstream
+=======
+
+        
+        if (data.profileImageFilename) {
+          const filename = data.profileImageFilename.split("/").pop();
+          setProfileImage(`http://localhost:8081/uploads/profile-images/${filename}`);
+        } else {
+          setProfileImage(defaultProfileImage);
+        }
+>>>>>>> Stashed changes
       } catch (err) {
         console.error("Error fetching user info:", err);
         setError(err.message || "Error loading user data.");
@@ -68,12 +92,14 @@ const Profile = () => {
       const imageURL = URL.createObjectURL(file);
       setProfileImage(imageURL);
       setSelectedFileName(file.name);
+      setHasChanges(true);
     }
   };
 
   const handleRemoveImage = () => {
     setProfileImage(defaultProfileImage);
     setSelectedFileName("");
+    setHasChanges(true);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -81,6 +107,10 @@ const Profile = () => {
 
   const handleFieldChange = (field, value) => {
     setEditedFields((prev) => ({ ...prev, [field]: value }));
+<<<<<<< Updated upstream
+=======
+    setHasChanges(true);
+>>>>>>> Stashed changes
   };
 
   const toggleEdit = () => {
@@ -89,6 +119,10 @@ const Profile = () => {
         fullName: userData.fullName || "",
         email: userData.email || "",
       });
+<<<<<<< Updated upstream
+=======
+      setHasChanges(false);
+>>>>>>> Stashed changes
     }
     setIsEditing((prev) => !prev);
   };
@@ -100,11 +134,29 @@ const Profile = () => {
       return;
     }
 
+<<<<<<< Updated upstream
     try {
+=======
+    if (!editedFields.fullName.trim() || !editedFields.email.trim()) {
+      setError("Full name and email are required.");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("fullName", editedFields.fullName.trim());
+      formData.append("email", editedFields.email.trim());
+
+      if (fileInputRef.current?.files[0]) {
+        formData.append("profileImage", fileInputRef.current.files[0]);
+      }
+
+>>>>>>> Stashed changes
       const response = await fetch("http://localhost:8081/users/update", {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
+<<<<<<< Updated upstream
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -114,14 +166,36 @@ const Profile = () => {
       });
 
       if (!response.ok) throw new Error("Failed to update profile.");
+=======
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const errorMsg =
+          errorData.detail || errorData.message || "Failed to update profile.";
+        setError(errorMsg);
+        return;
+      }
+>>>>>>> Stashed changes
 
       const updatedUser = await response.json();
       setUserData(updatedUser);
       setIsEditing(false);
+<<<<<<< Updated upstream
 
       alert("Profile updated. Please log in again.");
       logoutUser(); 
       navigate("/login"); 
+=======
+      setHasChanges(false);
+      setError(null);
+
+      alert("Profile updated. Please log in again.");
+      logoutUser();
+      navigate("/login");
+>>>>>>> Stashed changes
     } catch (err) {
       console.error("Error updating profile:", err);
       setError(err.message || "Update failed.");
@@ -204,6 +278,7 @@ const Profile = () => {
               )}
             </p>
             <p>
+<<<<<<< Updated upstream
               <strong>Roles:</strong> {userData.authorities?.join(", ") || "None"}
             </p>
             <p>
@@ -211,6 +286,17 @@ const Profile = () => {
             </p>
 
             {isEditing && (
+=======
+              <strong>Roles:</strong>{" "}
+              {userData.authorities?.join(", ") || "None"}
+            </p>
+            <p>
+              <strong>Status:</strong>{" "}
+              {userData.enabled ? "Enabled" : "Disabled"}
+            </p>
+
+            {hasChanges && (
+>>>>>>> Stashed changes
               <button
                 onClick={handleSaveChanges}
                 className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"

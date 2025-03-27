@@ -30,10 +30,48 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     volumes:
       - user-data:/app/data
+      - ./services/uploads:/app/uploads
     networks:
       - microservices-network
     depends_on:
+<<<<<<< Updated upstream
       postgres:
+=======
+      user-db:
+        condition: service_healthy
+
+
+  task-service:
+    build:
+      context: ./services
+      dockerfile: TaskService/Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    volumes:
+      - task-data:/app/data
+    networks:
+      - microservices-network
+    depends_on:
+      task-db:
+        condition: service_healthy
+
+  project-service:
+    build:
+      context: ./services
+      dockerfile: ProjectService/Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    volumes:
+      - project-data:/app/data
+    networks:
+      - microservices-network
+    depends_on:
+      project-db:
+>>>>>>> Stashed changes
         condition: service_healthy
 
   notification-service:
