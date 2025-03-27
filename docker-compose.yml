@@ -34,9 +34,6 @@ services:
     networks:
       - microservices-network
     depends_on:
-<<<<<<< Updated upstream
-      postgres:
-=======
       user-db:
         condition: service_healthy
 
