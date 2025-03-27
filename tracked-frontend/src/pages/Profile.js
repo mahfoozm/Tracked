@@ -1,21 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
 import useWebSocket from "react-use-websocket";
-import { isAuthenticated } from "../services/authService";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../services/AuthContext"; 
 import defaultProfileImage from "../assets/images/default-profile.png";
 
 const WEBSOCKET_BASE_URL = "localhost:8080";
 
 const Profile = () => {
   const socketUrl = `ws://${WEBSOCKET_BASE_URL}/ws`;
-
+  const navigate = useNavigate();
+  const { logoutUser } = useAuth(); 
   const [messages, setMessages] = useState([]);
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
   const [profileImage, setProfileImage] = useState(defaultProfileImage);
   const [selectedFileName, setSelectedFileName] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedFields, setEditedFields] = useState({});
 
   const fileInputRef = useRef(null);
-
   const { sendMessage, lastMessage } = useWebSocket(socketUrl);
 
   useEffect(() => {
@@ -28,7 +31,9 @@ const Profile = () => {
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        setError("Not authenticated.");
+        logoutUser();
+        alert("Session expired. Please log in again.");
+        navigate("/login");
         return;
       }
 
@@ -40,12 +45,14 @@ const Profile = () => {
           },
         });
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch user data.");
-        }
+        if (!response.ok) throw new Error("Failed to fetch user data.");
 
         const data = await response.json();
         setUserData(data);
+        setEditedFields({
+          fullName: data.fullName || "",
+          email: data.email || "",
+        });
       } catch (err) {
         console.error("Error fetching user info:", err);
         setError(err.message || "Error loading user data.");
@@ -53,7 +60,7 @@ const Profile = () => {
     };
 
     fetchUser();
-  }, []);
+  }, [logoutUser, navigate]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -68,7 +75,56 @@ const Profile = () => {
     setProfileImage(defaultProfileImage);
     setSelectedFileName("");
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; 
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleFieldChange = (field, value) => {
+    setEditedFields((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const toggleEdit = () => {
+    if (isEditing && userData) {
+      setEditedFields({
+        fullName: userData.fullName || "",
+        email: userData.email || "",
+      });
+    }
+    setIsEditing((prev) => !prev);
+  };
+
+  const handleSaveChanges = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Not authenticated.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8081/users/update", {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName: editedFields.fullName,
+          email: editedFields.email,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to update profile.");
+
+      const updatedUser = await response.json();
+      setUserData(updatedUser);
+      setIsEditing(false);
+
+      alert("Profile updated. Please log in again.");
+      logoutUser(); 
+      navigate("/login"); 
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      setError(err.message || "Update failed.");
     }
   };
 
@@ -105,19 +161,63 @@ const Profile = () => {
       </div>
 
       <div className="w-full md:w-2/3">
-        <h2 className="text-2xl font-bold text-blue-600 mb-4 text-center md:text-left">
-          User Profile
-        </h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">User Profile</h2>
+          {userData && (
+            <button
+              onClick={toggleEdit}
+              className="text-blue-600 hover:underline text-sm"
+            >
+              {isEditing ? "Cancel" : "Edit"}
+            </button>
+          )}
+        </div>
 
         {error && <p className="text-red-500 text-center">{error}</p>}
 
         {userData ? (
           <div className="space-y-3">
-            <p><strong>Full Name:</strong> {userData.fullName || "N/A"}</p>
-            <p><strong>Email:</strong> {userData.email}</p>
-            <p><strong>Username:</strong> {userData.username}</p>
-            <p><strong>Roles:</strong> {userData.authorities?.join(", ") || "None"}</p>
-            <p><strong>Status:</strong> {userData.enabled ? "Enabled" : "Disabled"}</p>
+            <p>
+              <strong>Full Name:</strong>{" "}
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={editedFields.fullName}
+                  onChange={(e) => handleFieldChange("fullName", e.target.value)}
+                  className="border border-gray-300 px-2 py-1 rounded ml-2"
+                />
+              ) : (
+                userData.fullName || "N/A"
+              )}
+            </p>
+            <p>
+              <strong>Email:</strong>{" "}
+              {isEditing ? (
+                <input
+                  type="email"
+                  value={editedFields.email}
+                  onChange={(e) => handleFieldChange("email", e.target.value)}
+                  className="border border-gray-300 px-2 py-1 rounded ml-2"
+                />
+              ) : (
+                userData.email
+              )}
+            </p>
+            <p>
+              <strong>Roles:</strong> {userData.authorities?.join(", ") || "None"}
+            </p>
+            <p>
+              <strong>Status:</strong> {userData.enabled ? "Enabled" : "Disabled"}
+            </p>
+
+            {isEditing && (
+              <button
+                onClick={handleSaveChanges}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              >
+                Save Changes
+              </button>
+            )}
           </div>
         ) : !error ? (
           <p className="text-center text-gray-600">Loading profile...</p>
@@ -130,7 +230,9 @@ const Profile = () => {
         </h3>
         {messages.length > 0 ? (
           messages.map((msg, idx) => (
-            <p key={idx} className="text-sm text-gray-700">{msg}</p>
+            <p key={idx} className="text-sm text-gray-700">
+              {msg}
+            </p>
           ))
         ) : (
           <p className="text-sm text-gray-500">No messages yet.</p>

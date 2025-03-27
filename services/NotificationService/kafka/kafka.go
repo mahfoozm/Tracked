@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	broker = "localhost:9092" // Kafka broker address.
-	topic  = "test_topic"     // Kafka topic to consume messages from.
+	broker = "kafka:29092" // Kafka broker address.
+	topic  = "test_topic"  // Kafka topic to consume messages from.
 )
 
 // KafkaConsumer manages the consumption of messages from Kafka and broadcasting

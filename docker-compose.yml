@@ -64,7 +64,7 @@ services:
       - microservices-network
 
   kafka:
-    image: bitnami/kafka:latest
+    image: bitnami/kafka:3.4.0
     hostname: kafka
     container_name: kafka
     ports:
