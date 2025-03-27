@@ -1,19 +1,19 @@
-package com.tracked.project.dtos;
+package com.tracked.task.dto;
 
+import com.tracked.task.model.Task;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class ProjectDto {
+public class TaskUpdateStatusRequest {
+
     @NotNull
-    private String name;
-    private ArrayList<Integer> projectMembers; // List of members in a projects
+    private Task.Status status;
+
 }

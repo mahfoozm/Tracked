@@ -1,9 +1,20 @@
 package com.tracked.project.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "userProjectTable")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Builder
 public class UserProjectTable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -11,24 +22,10 @@ public class UserProjectTable {
     private Integer id; // This will probably not get used
 
     @Column(nullable = false)
-    private Integer projectId;
-
-    @Column(nullable = false)
     private Integer userId;
 
-    public Integer getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "project_id", nullable = false)
+    @JsonBackReference
+    private Project project;
 }

@@ -1,5 +1,6 @@
 package com.tracked.task.dto;
 
+import com.tracked.task.model.Task;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,10 @@ public class TaskCreateRequest {
     private String name;
     @NotNull
     private Integer projectId;
+    @NotNull
+    private Integer creatorUserId;
+    @NotNull
+    Task.Status status;
     private Integer assigneeUserId;
     private LocalDate startDate;
     private LocalDate endDate;

@@ -1,21 +1,59 @@
 version: "2.1"
 
 services:
-  postgres:
+  user-db:
     image: postgres:latest
-    container_name: postgres
+    container_name: user-db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       - POSTGRES_USER=tracked
       - POSTGRES_PASSWORD=eecs4314
-      - POSTGRES_DB=tracked_db
+      - POSTGRES_DB=user_db
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - user-db-data:/var/lib/postgresql/data
     networks:
       - microservices-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tracked -d tracked_db"]
+      test: ["CMD-SHELL", "pg_isready -U tracked -d user_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  task-db:
+    image: postgres:latest
+    container_name: task-db
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_USER=tracked
+      - POSTGRES_PASSWORD=eecs4314
+      - POSTGRES_DB=task_db
+    volumes:
+      - task-db-data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tracked -d task_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  project-db:
+    image: postgres:latest
+    container_name: project-db
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_USER=tracked
+      - POSTGRES_PASSWORD=eecs4314
+      - POSTGRES_DB=project_db
+    volumes:
+      - project-db-data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tracked -d project_db"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -33,7 +71,7 @@ services:
     networks:
       - microservices-network
     depends_on:
-      postgres:
+      user-db:
         condition: service_healthy
 
   task-service:
@@ -45,11 +83,27 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     volumes:
-      - user-data:/app/data
+      - task-data:/app/data
     networks:
       - microservices-network
     depends_on:
-      postgres:
+      task-db:
+        condition: service_healthy
+
+  project-service:
+    build:
+      context: ./services
+      dockerfile: ProjectService/Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    volumes:
+      - project-data:/app/data
+    networks:
+      - microservices-network
+    depends_on:
+      project-db:
         condition: service_healthy
 
   notification-service:
@@ -116,6 +170,10 @@ networks:
 
 volumes:
   user-data:
+  task-data:
+  project-data:
+  user-db-data:
+  task-db-data:
+  project-db-data:
   zookeeper-data:
   kafka-data:
-  postgres-data:

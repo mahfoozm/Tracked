@@ -1,4 +1,4 @@
-package com.tracked.event.user;
+package com.tracked.event.project;
 
 import com.tracked.event.common.CommonKafkaConfigs;
 import com.tracked.kafka.config.TrackedKafkaGroupId;
@@ -14,47 +14,47 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
 @Configuration
-@ConditionalOnProperty(name = "tracked.user-event-store.enabled", havingValue = "true")
-public class UserEventConfig {
+@ConditionalOnProperty(name = "tracked.project-event-store.enabled", havingValue = "true")
+public class ProjectEventConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserEventConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProjectEventConfig.class);
 
     @Value("${tracked.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    private CommonKafkaConfigs<Integer, UserEvent> commonKafkaConfigs = null;
+    private CommonKafkaConfigs<Integer, ProjectEvent> commonKafkaConfigs = null;
 
-    private CommonKafkaConfigs<Integer, UserEvent> commonKafkaConfigs() {
+    private CommonKafkaConfigs<Integer, ProjectEvent> commonKafkaConfigs() {
         if (this.commonKafkaConfigs == null) {
             this.commonKafkaConfigs = new CommonKafkaConfigs<>(
                 this.bootstrapServers,
-                TrackedKafkaGroupId.USER_GROUP
+                TrackedKafkaGroupId.PROJECT_GROUP
             );
         }
         return this.commonKafkaConfigs;
     }
 
-    @Bean("userKafkaConsumerFactory")
-    public ConsumerFactory<Integer, UserEvent> consumerFactory() {
-        logger.info("Creating user event consumer factory");
+    @Bean("projectKafkaConsumerFactory")
+    public ConsumerFactory<Integer, ProjectEvent> consumerFactory() {
+        logger.info("Creating project event consumer factory");
         return this.commonKafkaConfigs().consumerFactory();
     }
 
-    @Bean("userKafkaListenerContainerFactory")
-    public ConcurrentKafkaListenerContainerFactory<Integer, UserEvent> kafkaListenerContainerFactory() {
-        logger.info("Creating user event listener container factory");
+    @Bean("projectKafkaListenerContainerFactory")
+    public ConcurrentKafkaListenerContainerFactory<Integer, ProjectEvent> kafkaListenerContainerFactory() {
+        logger.info("Creating project event listener container factory");
         return this.commonKafkaConfigs().kafkaListenerContainerFactory();
     }
 
-    @Bean("userKafkaProducerFactory")
-    public ProducerFactory<Integer, UserEvent> producerFactory() {
-        logger.info("Creating user event producer factory");
+    @Bean("projectKafkaProducerFactory")
+    public ProducerFactory<Integer, ProjectEvent> producerFactory() {
+        logger.info("Creating project event producer factory");
         return this.commonKafkaConfigs().producerFactory();
     }
 
-    @Bean("userKafkaTemplate")
-    public KafkaTemplate<Integer, UserEvent> kafkaTemplate() {
-        logger.info("Creating user event kafka template");
+    @Bean("projectKafkaTemplate")
+    public KafkaTemplate<Integer, ProjectEvent> kafkaTemplate() {
+        logger.info("Creating project event kafka template");
         return this.commonKafkaConfigs().kafkaTemplate();
     }
 

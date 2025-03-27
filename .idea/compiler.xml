@@ -18,9 +18,27 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
         <module name="project" />
-        <module name="JavaLibrary" />
         <module name="user" />
-        <module name="TaskService" />
+      </profile>
+      <profile name="Annotation profile for JavaLibrary" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
+        </processorPath>
+        <module name="JavaLibrary" />
+      </profile>
+      <profile name="Annotation profile for TaskService" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
+        </processorPath>
+        <module name="task" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -30,9 +48,9 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="JavaLibrary" options="-parameters" />
-      <module name="TaskService" options="-parameters" />
       <module name="TeamService" options="-parameters" />
       <module name="project" options="-parameters" />
+      <module name="task" options="-parameters" />
       <module name="team" options="-parameters" />
       <module name="user" options="-parameters" />
     </option>

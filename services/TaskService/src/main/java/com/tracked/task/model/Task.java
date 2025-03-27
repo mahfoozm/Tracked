@@ -1,11 +1,9 @@
 package com.tracked.task.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.tracked.event.task.TaskEvent;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +23,34 @@ import java.time.LocalDate;
 @Builder
 public class Task {
 
+    public enum Status {
+        NOT_STARTED("NOT_STARTED"),
+        IN_PROGRESS("IN_PROGRESS"),
+        DONE("DONE"),
+        CANCELLED("CANCELLED");
+
+        private final String value;
+
+        Status(String value) {
+            this.value = value;
+        }
+
+        @JsonValue
+        public String fromValue() {
+            return this.value;
+        }
+
+        @JsonCreator
+        public static Status fromValue(String value) {
+            for (Status status : Status.values()) {
+                if (status.value.equalsIgnoreCase(value)) {
+                    return status;
+                }
+            }
+            throw new IllegalArgumentException("Invalid task status: " + value);
+        }
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
@@ -36,8 +62,15 @@ public class Task {
     @Column(nullable = false, name = "project_id")
     private Integer projectId;
 
+    @Column(nullable = false, name = "creator_user_id")
+    private Integer creatorUserId;
+
     @Column(name = "assignee_user_id")
     private Integer assigneeUserId;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @Column(name = "start_date")
     private LocalDate startDate;
@@ -52,5 +85,19 @@ public class Task {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDate updatedAt;
+
+    public TaskEvent toTaskEvent() {
+        return TaskEvent.builder()
+            .id(this.getId())
+            .name(this.getName())
+            .creatorUserId(this.getCreatorUserId())
+            .assigneeUserId(this.getAssigneeUserId())
+            .status(this.getStatus().fromValue())
+            .startDate(this.getStartDate())
+            .endDate(this.getEndDate())
+            .createdAt(this.getCreatedAt())
+            .updatedAt(this.getUpdatedAt())
+            .build();
+    }
 
 }

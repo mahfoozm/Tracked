@@ -1,5 +1,6 @@
 package com.tracked.project.controller;
 
+import com.tracked.event.user.UserEvent;
 import com.tracked.project.dtos.ProjectDto;
 import com.tracked.project.model.Project;
 import com.tracked.project.service.ProjectService;
@@ -19,23 +20,34 @@ public class ProjectController {
         this.userProjectService = userProjectService;
     }
 
-    @GetMapping("/{id}")
-    public Project getProjectById(@PathVariable Integer projectID) {
-        return projectService.getProjectById(projectID);
+    @GetMapping("")
+    public List<Project> getAllProjects() {
+        return projectService.allProjects();
     }
 
     @GetMapping("/{id}")
-    public List<Integer> getProjectsByUserId(@PathVariable Integer userID) {
-        return userProjectService.usersProjects(userID);
+    public Project getProjectById(@PathVariable Integer id) {
+        return projectService.getProjectById(id);
     }
 
-    @GetMapping("/{id}")
-    public List<Integer> getProjectsUsers(@PathVariable Integer projectID) {
-        return userProjectService.projectMembers(projectID);
+    @GetMapping("/user/{id}")
+    public List<Integer> getProjectsByUserId(@PathVariable Integer id) {
+        return userProjectService.usersProjects(id);
     }
 
-    @PostMapping("/")
+    @PostMapping("/{projectId}/user/{userId}")
+    public void addUserToProject(@PathVariable Integer projectId, @PathVariable Integer userId) {
+        this.projectService.addUserToProject(projectId, userId);
+    }
+
+    @GetMapping("/{id}/users")
+    public List<UserEvent> getProjectsUsers(@PathVariable Integer id) {
+        return userProjectService.projectMembers(id);
+    }
+
+    @PostMapping("")
     public void createProject(@RequestBody ProjectDto projectDto) {
-        Project newProject = projectService.createProject(projectDto);
+        projectService.createProject(projectDto);
     }
+
 }
