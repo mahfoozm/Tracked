@@ -35,8 +35,8 @@ function App() {
             <Route path="/login" element={<RedirectIfAuthenticated element={<Login />} />} />
 
             <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
-            <Route path="/projects" element={<UserProjects />} />
-            <Route path="/tasks" element={<UserTasks />} />
+            <Route path="/projects" element={<ProtectedRoute element={<UserProjects />} />} />
+            <Route path="/tasks"  element={<ProtectedRoute element={<UserTasks />} />} />
 
             <Route path="/projects/:id" element={<ProjectPage />} />
             <Route path="/tasks/:id" element={<TaskPage />} />
