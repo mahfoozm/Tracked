@@ -37,6 +37,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column(name = "profile_image_filename")
+    private String profileImageFilename;
+
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private Date createdAt;
