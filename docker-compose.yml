@@ -68,6 +68,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     volumes:
       - user-data:/app/data
+      - ./services/uploads:/app/uploads
     networks:
       - microservices-network
     depends_on:
@@ -134,7 +135,7 @@ services:
       - microservices-network
 
   kafka:
-    image: bitnami/kafka:latest
+    image: bitnami/kafka:3.4.0
     hostname: kafka
     container_name: kafka
     ports:

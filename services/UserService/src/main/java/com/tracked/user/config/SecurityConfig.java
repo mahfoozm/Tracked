@@ -36,7 +36,7 @@ public class SecurityConfig {
             .and()
             .csrf().disable()
             .authorizeHttpRequests()
-            .requestMatchers("/auth/login", "/auth/signup").permitAll()
+            .requestMatchers("/auth/login", "/auth/signup", "/uploads/**").permitAll()
             .anyRequest().authenticated()
             .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
