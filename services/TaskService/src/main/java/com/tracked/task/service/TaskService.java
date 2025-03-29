@@ -1,16 +1,8 @@
 package com.tracked.task.service;
 
-import com.tracked.event.project.ProjectEventStore;
-import com.tracked.event.task.TaskEvent;
-import com.tracked.event.user.UserEventStore;
-import com.tracked.kafka.config.TrackedKafkaTopic;
-import com.tracked.task.dto.TaskCreateRequest;
-import com.tracked.task.dto.TaskResponse;
-import com.tracked.task.dto.TaskUpdateRequest;
-import com.tracked.task.dto.TaskUpdateStatusRequest;
-import com.tracked.task.model.Task;
-import com.tracked.task.repository.TaskRepository;
-import com.tracked.task.repository.query.TaskQuerySpecification;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -18,8 +10,16 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
+import com.tracked.event.project.ProjectEventStore;
+import com.tracked.event.task.TaskEvent;
+import com.tracked.event.user.UserEventStore;
+import com.tracked.kafka.config.TrackedKafkaTopic;
+import com.tracked.task.dto.TaskCreateRequest;
+import com.tracked.task.dto.TaskResponse;
+import com.tracked.task.dto.TaskUpdateRequest;
+import com.tracked.task.model.Task;
+import com.tracked.task.repository.TaskRepository;
+import com.tracked.task.repository.query.TaskQuerySpecification;
 
 @Service
 public class TaskService {
@@ -92,24 +92,24 @@ public class TaskService {
             .assigneeUserId(taskCreateRequest.getAssigneeUserId())
             .build();
 
-        if (task.getCreatorUserId() != null && this.userEventStore.getUserEvent(task.getCreatorUserId()) == null) {
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                String.format("Creating user with id %s does not exist", task.getCreatorUserId())
-            );
-        }
-        if (task.getAssigneeUserId() != null && this.userEventStore.getUserEvent(task.getAssigneeUserId()) == null) {
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                String.format("Assigning user with id %s does not exist", task.getAssigneeUserId())
-            );
-        }
-        if (task.getProjectId() != null && this.projectEventStore.getProjectEvent(task.getProjectId()) == null) {
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                String.format("Project with id %s does not exist", task.getProjectId())
-            );
-        }
+        // if (task.getCreatorUserId() != null && this.userEventStore.getUserEvent(task.getCreatorUserId()) == null) {
+        //     throw new ResponseStatusException(
+        //         HttpStatus.BAD_REQUEST,
+        //         String.format("Creating user with id %s does not exist", task.getCreatorUserId())
+        //     );
+        // }
+        // if (task.getAssigneeUserId() != null && this.userEventStore.getUserEvent(task.getAssigneeUserId()) == null) {
+        //     throw new ResponseStatusException(
+        //         HttpStatus.BAD_REQUEST,
+        //         String.format("Assigning user with id %s does not exist", task.getAssigneeUserId())
+        //     );
+        // }
+        // if (task.getProjectId() != null && this.projectEventStore.getProjectEvent(task.getProjectId()) == null) {
+        //     throw new ResponseStatusException(
+        //         HttpStatus.BAD_REQUEST,
+        //         String.format("Project with id %s does not exist", task.getProjectId())
+        //     );
+        // }
 
         task = this.taskRepository.save(task);
 
