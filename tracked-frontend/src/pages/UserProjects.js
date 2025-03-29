@@ -63,16 +63,16 @@ const UserProjects = () => {
     } else {
       fetchProjects();
     }
-  }, [user]);
+  }, [userData]);
 
   const fetchProjects = async () => {
     if (userData) {
-      const response = await fetch(`http://localhost:8081/projects/user/${userData.id}`, {
+      const response = await fetch(`http://localhost:8083/projects/user/${userData.id}`, {
     });
-    const gotProjects = response.json;
+    const gotProjects = await response.json();
     setProjects(gotProjects);
 
-    console.log("Got Projects: ", projects);
+    console.log("Got Projects: ", gotProjects);
     }
   }
 

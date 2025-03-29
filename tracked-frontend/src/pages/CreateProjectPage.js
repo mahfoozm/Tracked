@@ -5,7 +5,7 @@ import { useAuth } from "../services/AuthContext";
 const CreateProjectPage = () => {
 
   const { user } = useAuth();
-  const [projectName, setProjectName] = useState('');
+  const [name, setProjectName] = useState('');
   const [membersNames, setMembersNames] = useState([]);
   const [description, setDescription] = useState('');
   const [userData, setUserData] = useState(null);
@@ -15,7 +15,7 @@ const CreateProjectPage = () => {
 
   const handleSubmit = () => {
     const projectData = {
-      projectName,
+      name,
       members: membersNames,
       description,
     };
@@ -28,9 +28,12 @@ const CreateProjectPage = () => {
 
   const addProject = async (projectData) => {
     if (userData) {
-      const response = await fetch(`http://localhost:8081/projects`, {
+      const response = await fetch(`http://localhost:8083/projects`, {
         method: "POST",
-        body: projectData,
+        body: JSON.stringify(projectData),
+        headers: {
+          "Content-Type" : "application/json"
+        }
       });
     }
   }
@@ -79,7 +82,7 @@ const CreateProjectPage = () => {
             type="text"
             className="border rounded p-2 text-gray-900"
             placeholder="Project Name"
-            value={projectName}
+            value={name}
             onChange={(e) => setProjectName(e.target.value)}
           />
 
