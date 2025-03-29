@@ -31,7 +31,7 @@ public class ProjectController {
     }
 
     @GetMapping("/user/{id}")
-    public List<Integer> getProjectsByUserId(@PathVariable Integer id) {
+    public List<Project> getProjectsByUserId(@PathVariable Integer id) {
         return userProjectService.usersProjects(id);
     }
 

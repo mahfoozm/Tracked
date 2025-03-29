@@ -1,10 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../services/AuthContext"; 
 
 const CreateProjectPage = () => {
 
+  const { user } = useAuth();
   const [projectName, setProjectName] = useState('');
   const [membersNames, setMembersNames] = useState([]);
   const [description, setDescription] = useState('');
+  const [userData, setUserData] = useState(null);
+  const [error, setError] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const navigate = useNavigate(); 
 
   const handleSubmit = () => {
     const projectData = {
@@ -12,9 +19,49 @@ const CreateProjectPage = () => {
       members: membersNames,
       description,
     };
+    addProject(projectData);
 
-    console.log('Created Project JSON:', projectData);
+    console.log("Created Project JSON:", projectData);
+    console.log("User: ", userData);
   };
+
+  const addProject = async (projectData) => {
+    if (userData) {
+      const response = await fetch(`http://localhost:8081/projects`, {
+        method: "POST",
+        body: projectData,
+      });
+    }
+  }
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Session expired. Please log in again.");
+        navigate("/login");
+        return;
+      }
+    
+      try {
+        const response = await fetch("http://localhost:8081/users/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+    
+        if (!response.ok) throw new Error("Failed to fetch user data.");
+    
+        const data = await response.json();
+        setUserData(data);
+      } catch (err) {
+        console.error("Error fetching user info:", err);
+        setError(err.message || "Error loading user data.");
+      }
+    };
+    fetchUser();
+  }, [navigate]);
 
   return (
     <div className="flex items-center justify-center w-full min-h-screen bg-gray-100 py-8">

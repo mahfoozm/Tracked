@@ -7,10 +7,42 @@ const UserProjects = () => {
   const [projects, setProjects] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate(); 
+  const [userData, setUserData] = useState(null);
+  const [error, setError] = useState(null);
 
   const handleClick = () => {
     navigate("/create_project"); 
   };
+
+  useEffect(() => {
+      const fetchUser = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Session expired. Please log in again.");
+          navigate("/login");
+          return;
+        }
+  
+        try {
+          const response = await fetch("http://localhost:8081/users/me", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+  
+          if (!response.ok) throw new Error("Failed to fetch user data.");
+  
+          const data = await response.json();
+          setUserData(data);
+        } catch (err) {
+          console.error("Error fetching user info:", err);
+          setError(err.message || "Error loading user data.");
+        }
+      };
+  
+      fetchUser();
+    }, [navigate]);
 
   useEffect(() => {
     if (!user) {
@@ -28,8 +60,21 @@ const UserProjects = () => {
         { id: 11, name: "Enemy of the Empire" }, 
         { id: 12, name: "Z06" }
       ]);
+    } else {
+      fetchProjects();
     }
   }, [user]);
+
+  const fetchProjects = async () => {
+    if (userData) {
+      const response = await fetch(`http://localhost:8081/projects/user/${userData.id}`, {
+    });
+    const gotProjects = response.json;
+    setProjects(gotProjects);
+
+    console.log("Got Projects: ", projects);
+    }
+  }
 
   const searchProjects = projects.filter(project =>
     project.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -40,7 +85,7 @@ const UserProjects = () => {
       <div className="w-3/4 md:w-2/3 lg:w-1/2 bg-white p-8 rounded-lg shadow-lg">
         <div className="relative mb-4">
           <h2 className="text-4xl font-extrabold text-blue-600 text-center">
-            {user ? `${user}'s Projects` : "User's Projects"}
+            {userData? `${userData.fullName}'s Projects` : "User's Projects"}
           </h2>
           <button 
             onClick={handleClick}

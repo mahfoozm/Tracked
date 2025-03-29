@@ -6,7 +6,39 @@ const UserTasks = () => {
   const { user } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Session expired. Please log in again.");
+        navigate("/login");
+        return;
+      }
+    
+      try {
+        const response = await fetch("http://localhost:8081/users/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+    
+        if (!response.ok) throw new Error("Failed to fetch user data.");
+    
+        const data = await response.json();
+        setUserData(data);
+      } catch (err) {
+        console.error("Error fetching user info:", err);
+        setError(err.message || "Error loading user data.");
+      }
+    };
+    
+    fetchUser();
+  }, [navigate]);
 
   const handleClick = () => {
     navigate("/create_task"); 
@@ -28,8 +60,21 @@ const UserTasks = () => {
             { id: 11, name: "Fix Alignment" }, 
             { id: 12, name: "Go 2 Aeroport Again" }
         ]);
-      }
+      } //else {
+
+      //}
   }, [user]);
+
+  const fetchTasks = async () => {
+    if (userData) {
+      const response = await fetch(`http://localhost:8081/task/user/${userData.id}`, {
+    });
+    const gotTasks = response.json;
+    setTasks(gotTasks);
+
+    console.log("Got Tasks: ", gotTasks);
+    }
+  }
 
   const searchTasks = tasks.filter(task =>
     task.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -40,7 +85,7 @@ const UserTasks = () => {
       <div className="w-3/4 md:w-2/3 lg:w-1/2 bg-white p-8 rounded-lg shadow-lg">
         <div className="relative mb-4">
           <h2 className="text-4xl font-extrabold text-blue-600 text-center">
-            {user ? `${user}'s Tasks` : "User's Tasks"}
+            {userData ? `${userData.fullName}'s Tasks` : "User's Tasks"}
           </h2>
           <button 
             onClick={handleClick}

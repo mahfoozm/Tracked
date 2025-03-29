@@ -2,6 +2,7 @@ package com.tracked.project.service;
 
 import com.tracked.event.user.UserEvent;
 import com.tracked.event.user.UserEventStore;
+import com.tracked.project.model.Project;
 import com.tracked.project.model.UserProjectTable;
 import com.tracked.project.repository.UserProjectRepository;
 import org.springframework.stereotype.Service;
@@ -32,11 +33,11 @@ public class UserProjectService {
             .collect(Collectors.toList());
     }
 
-    public List<Integer> usersProjects(Integer userId) {
-        List<Integer> teams = new ArrayList<>();
+    public List<Project> usersProjects(Integer userId) {
+        List<Project> teams = new ArrayList<>();
         List<UserProjectTable> query = userProjectRepository.findAllByUserId(userId);
         for (int i = 0; i < query.size(); i++) {
-            teams.add(query.get(i).getProject().getId());
+            teams.add(query.get(i).getProject());
         }
         return teams;
     }
