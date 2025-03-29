@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CreateTaskPage = () => {
 
@@ -7,6 +8,8 @@ const CreateTaskPage = () => {
   const [assignee, setAssignee] = useState('');
   const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
+  const navigate = useNavigate();
+
   
   const handleSubmit = () => {
     const projectData = {
@@ -18,6 +21,8 @@ const CreateTaskPage = () => {
     };
   
     console.log('Created Task JSON:', projectData);
+
+    navigate("/tasks");
   };
 
   return (
@@ -101,7 +106,7 @@ const CreateTaskPage = () => {
           <button
             onClick={handleSubmit}
             className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
-          >s
+          >
             Create Task
           </button>
         </div>   

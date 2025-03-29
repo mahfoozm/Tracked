@@ -23,6 +23,7 @@ const CreateProjectPage = () => {
 
     console.log("Created Project JSON:", projectData);
     console.log("User: ", userData);
+    navigate("/projects");
   };
 
   const addProject = async (projectData) => {
