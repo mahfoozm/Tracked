@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -110,6 +111,9 @@ public class ProjectService {
                 .updatedAt(project.getUpdatedAt())
                 .build()
         );
+        for (Integer i : input.getProjectMembers()) {
+            this.userProjectRepository.save(UserProjectTable.builder().userId(i).project(project).build());
+        }
         return project;
     }
 }
