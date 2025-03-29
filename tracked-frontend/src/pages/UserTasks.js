@@ -60,14 +60,14 @@ const UserTasks = () => {
             { id: 11, name: "Fix Alignment" }, 
             { id: 12, name: "Go 2 Aeroport Again" }
         ]);
-      } //else {
-
-      //}
+      } else {
+        fetchTasks();
+      }
   }, [user]);
 
   const fetchTasks = async () => {
     if (userData) {
-      const response = await fetch(`http://localhost:8081/task/user/${userData.id}`, {
+      const response = await fetch(`http://localhost:8082/task?assignee_user_id=${userData.id}`, {
     });
     const gotTasks = response.json;
     setTasks(gotTasks);

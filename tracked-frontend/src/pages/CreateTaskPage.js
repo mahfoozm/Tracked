@@ -1,29 +1,112 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../services/AuthContext"; 
 
 const CreateTaskPage = () => {
 
   const [taskName, setTaskName] = useState('');
   const [projectName, setProjectName] = useState('');
+  const [allProjects, setAllProjects] = useState([]);
   const [assignee, setAssignee] = useState('');
   const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
+  const [allUsers, setAllUsers] = useState([]);
+  const [userData, setUserData] = useState(null);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   
   const handleSubmit = () => {
-    const projectData = {
-      taskName,
-      projectName,
-      assignee,
-      date,
+    const taskData = {
+      name : taskName,
+      projectId : projectName,
+      assigneeUserId : assignee,
+      creatorUserId : userData.id,
+      endData: date,
       description,
     };
   
-    console.log('Created Task JSON:', projectData);
+    console.log('Created Task JSON:', taskData);
+    addTask(taskData);
 
     navigate("/tasks");
   };
+
+  const addTask = async (taskData) => {
+    if (userData) {
+      const response = await fetch(`http://localhost:8082/task`, {
+        method: "POST",
+        body: JSON.stringify(taskData),
+        headers: {
+          "Content-Type" : "application/json"
+        }
+      });
+    }
+  }
+
+  const retrieveAllUsers = async() => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`http://localhost:8081/users/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      }
+    }
+    );
+    if (response.ok) {
+
+      setAllUsers(await response.json())
+    }
+    
+  }
+
+  const fetchProjects = async () => {
+    const token = localStorage.getItem("token");
+
+      const response = await fetch(`http://localhost:8083/projects`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      }
+    });
+    if (response.ok) {
+      setAllProjects(await response.json());
+    }
+  }
+
+  useEffect(() => {
+    fetchProjects();
+      const fetchUser = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Session expired. Please log in again.");
+          navigate("/login");
+          return;
+        }
+      
+        try {
+          const response = await fetch("http://localhost:8081/users/me", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+      
+          if (!response.ok) throw new Error("Failed to fetch user data.");
+      
+          const data = await response.json();
+          setUserData(data);
+        } catch (err) {
+          console.error("Error fetching user info:", err);
+          setError(err.message || "Error loading user data.");
+        }
+      };
+      fetchUser();
+      retrieveAllUsers();
+    }, [navigate]);
 
   return (
     <div className="flex items-center justify-center w-full min-h-screen bg-gray-100 py-8">
@@ -45,40 +128,42 @@ const CreateTaskPage = () => {
 
           <div className="font-semibold text-gray-700">Part of:</div>
           <div className="h-32 overflow-y-auto border rounded p-2 flex flex-wrap gap-2">
-            {['Nexus','Five Night', 'C5', 'Project D', 'LongBox', 'Wizard', 'DC', 'The Name', 'Crimson Empire', 'Dark Pheonix', 'Rogue Squadron', 'Fate'].map((name) => (
+            {/* ['Nexus','Five Night', 'C5', 'Project D', 'LongBox', 'Wizard', 'DC', 'The Name', 'Crimson Empire', 'Dark Pheonix', 'Rogue Squadron', 'Fate'] */}
+            {allProjects.map((project, index) => (
               <button
-                key={name}
+                key={index}
                 type="button"
                 className={`px-4 py-1 rounded-full border transition text-sm ${
-                  projectName === name
+                  projectName === project.id
                     ? 'bg-blue-600 text-white border-blue-600'
                     : 'bg-white text-gray-700 border-gray-300'
                 }`}
                 onClick={() =>
-                  setProjectName((prev) => (prev === name ? '' : name))
+                  setProjectName((prev) => (prev.id === project.id ? '' : project.id))
                 }
               >
-                {name}
+                {project.name}
               </button>
             ))}
           </div>
 
           <div className="font-semibold text-gray-700">Assignee:</div>
           <div className="h-32 overflow-y-auto border rounded p-2 flex flex-wrap gap-2">
-            {['Alice', 'Bob', 'Charlie', 'Dana', 'Eli', 'Fred', 'Gerry', 'Henry', 'Ines', 'Jack', 'Kelvin', 'Lawrance',' Mikey', 'Nicole', 'Oscar', 'Penny', 'Quan'].map((name) => (
+            {/* ['Alice', 'Bob', 'Charlie', 'Dana', 'Eli', 'Fred', 'Gerry', 'Henry', 'Ines', 'Jack', 'Kelvin', 'Lawrance',' Mikey', 'Nicole', 'Oscar', 'Penny', 'Quan'] */}
+            {allUsers.map((user, index) => (
               <button
-                key={name}
+                key={index}
                 type="button"
                 className={`px-4 py-1 rounded-full border transition text-sm ${
-                  assignee === name
+                  assignee === user
                     ? 'bg-blue-600 text-white border-blue-600'
                     : 'bg-white text-gray-700 border-gray-300'
                 }`}
                 onClick={() =>
-                  setAssignee((prev) => (prev === name ? '' : name))
+                  setAssignee((prev) => (prev.id === user.id ? '' : user))
                 }
               >
-                {name}
+                {user.fullName}
               </button>
             ))}
           </div>
