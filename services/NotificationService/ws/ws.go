@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"notification-service/client"
+	"strconv"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -32,22 +33,29 @@ type WebSocketHandler struct {
 // registers it in the ClientManager. This should be used with the http package
 // like this: http.HandleFunc("/ws", wsh.HandleWebSocket)
 func (wsh *WebSocketHandler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
-    userId := r.URL.Query().Get("userId")
-    if userId == "" {
-        log.Println("No user ID provided in WebSocket connection")
-        http.Error(w, "User ID is required", http.StatusBadRequest)
-        return
-    }
+	log.Println("Upgrading HTTP connection to WebSocket")
 
-    conn, err := upgrader.Upgrade(w, r, nil)
-    if err != nil {
-        log.Println("Error upgrading to websocket:", err)
-        return
-    }
+	user_id_str := r.URL.Query().Get("userId")
+	if user_id_str == "" {
+		log.Println("No user ID provided in WebSocket connection")
+		http.Error(w, "User ID is required", http.StatusBadRequest)
+		return
+	}
+	user_id, err := strconv.Atoi(user_id_str)
+	if err != nil {
+		log.Printf("User ID %s could not be converted to integer\n", user_id_str)
+		http.Error(w, "User ID could not be converted to integer", http.StatusBadRequest)
+		return
+	}
 
-    wsh.Cm.AddClient(conn, userId)
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println("Error upgrading to websocket:", err)
+		return
+	}
+	wsh.Cm.AddClient(user_id, conn)
 
-    log.Printf("New websocket connection: %s for user: %s\n", conn.RemoteAddr(), userId)
+	log.Printf("New websocket connection: %s for user: %d\n", conn.RemoteAddr(), user_id)
 }
 
 // listenForShutdown waits for a shutdown signal (which will come from the
@@ -75,6 +83,8 @@ func (wsh *WebSocketHandler) listenForShutdown(wg *sync.WaitGroup, server *http.
 // StartWebsocketServer starts an HTTP server that listens for WebSocket
 // connections and handles shutdown gracefully.
 func (wsh *WebSocketHandler) StartWebsocketServer(wg *sync.WaitGroup) {
+	log.Println("Starting WebSocket server")
+
 	// Mark this goroutine as done when it finishes
 	defer wg.Done()
 

@@ -13,74 +13,67 @@ import (
 
 const (
 	broker = "localhost:9092" // Kafka broker address.
-	topic  = "test_topic"     // Kafka topic to consume messages from.
 )
 
 // KafkaConsumer manages the consumption of messages from Kafka and broadcasting
 // them to WebSocket clients.
-type KafkaConsumer struct {
+type KafkaConsumer[T client.ValidKafkaMessageTypes] struct {
 	Cm       *client.ClientManager // ClientManager to broadcast messages to WebSocket clients.
 	Shutdown chan struct{}         // Channel to signal shutdown of the Kafka consumer.
 }
 
-// KafkaTestMessage is the structure of Kafka messages in the "test_topic" topic.
-type KafkaTestMessage struct {
-	ID        int     `json:"id"`
-	Message   string  `json:"content"`
-	Timestamp float64 `json:"timestamp"`
-	UserID   string     `json:"userID"`
-}
+func (kc *KafkaConsumer[T]) StartKafkaConsumer(wg *sync.WaitGroup, topic string) {
+	defer wg.Done()
+	config := sarama.NewConfig()
+	config.Consumer.Return.Errors = true
 
-// StartKafkaConsumer starts the Kafka consumer that listens for messages on the
-// specified Kafka topic and broadcasts them to WebSocket clients. It shuts down
-// gracefully when a signal is received on the shutdown channel (kc.Shutdown).
-func (kc *KafkaConsumer) StartKafkaConsumer(wg *sync.WaitGroup) {
-    defer wg.Done()
+	kafka_client, err := sarama.NewConsumer([]string{broker}, config)
+	if err != nil {
+		log.Fatalf("Error creating %s Kafka consumer: %v", topic, err)
+	}
 
-    config := sarama.NewConfig()
-    config.Consumer.Return.Errors = true
+	defer kafka_client.Close()
 
-    client, err := sarama.NewConsumer([]string{broker}, config)
-    if err != nil {
-        log.Fatalf("Error creating consumer: %v", err)
-    }
+	partitionConsumer, err := kafka_client.ConsumePartition(topic, 0, sarama.OffsetOldest)
+	if err != nil {
+		log.Fatalf("Error creating %s partition consumer: %v", topic, err)
+	}
 
-    defer client.Close()
+	defer partitionConsumer.Close()
 
-    partitionConsumer, err := client.ConsumePartition(topic, 0, sarama.OffsetNewest)
-    if err != nil {
-        log.Fatalf("Error creating partition consumer: %v", err)
-    }
+	log.Printf("%s Kafka consumer started. Waiting for messages...\n", topic)
 
-    defer partitionConsumer.Close()
+	for {
+		select {
+		case msg := <-partitionConsumer.Messages():
+			message := string(msg.Value)
+			log.Printf("%s Kafka consumer received message: %s\n", topic, message)
 
-    log.Println("Kafka Consumer started. Waiting for messages...")
+			var kafkaMsg T
+			err := json.Unmarshal(msg.Value, &kafkaMsg)
+			if err != nil {
+				log.Printf("%s Kafka consumer failed to unmarshal message: %v. Message: %s", topic, err, message)
+				continue
+			}
 
-    for {
-        select {
-        case msg := <-partitionConsumer.Messages():
-            message := string(msg.Value)
-            log.Printf("Received message: %s\n", message)
+			switch v := any(kafkaMsg).(type) {
+			case client.UserEvent:
+				user_event := client.UserEvent(v)
+				kc.Cm.UpdateUserEventStore(&user_event)
+			case client.ProjectEvent:
+				project_event := client.ProjectEvent(v)
+				kc.Cm.UpdateProjectEventStore(&project_event)
+			case client.TaskEvent:
+				task_event := client.TaskEvent(v)
+				kc.Cm.UpdateTaskEventStore(&task_event)
+				kc.Cm.BroadcastTaskMessage(&task_event, &message)
+			default:
+				log.Printf("Unknown event type: %T", v)
+			}
 
-            var kafkaMsg KafkaTestMessage
-            err := json.Unmarshal(msg.Value, &kafkaMsg)
-            if err != nil {
-                log.Printf("Error unmarshalling Kafka message: %v", err)
-                continue
-            }
-
-            if kafkaMsg.UserID != "" {
-                log.Printf("Sending notification to user: %s\n", kafkaMsg.UserID)
-                kc.Cm.BroadcastUserMessage(kafkaMsg.UserID, message)
-            } else {
-                // If no user ID, broadcast to all (system message)
-                log.Println("Broadcasting system notification to all users")
-                kc.Cm.BroadcastMessage(message)
-            }
-
-        case <-kc.Shutdown:
-            log.Println("Shutting down Kafka consumer...")
-            return
-        }
-    }
+		case <-kc.Shutdown:
+			log.Printf("Shutting down %s Kafka consumer...\n", topic)
+			return
+		}
+	}
 }
