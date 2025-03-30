@@ -13,17 +13,21 @@ const CreateProjectPage = () => {
   const [allUsers, setAllUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const projectData = {
       name,
       projectMembers: [...new Set([...selectedUsers, userData.id])], 
       description,
     };
-    addProject(projectData);
 
     console.log("Created Project JSON:", projectData);
-    console.log("User: ", userData);
-    navigate("/projects");
+
+    try {
+      await addProject(projectData);
+      navigate("/projects");
+    } catch (e) {
+      console.error("Error: ", e);
+    }
   };
 
   const addProject = async (projectData) => {

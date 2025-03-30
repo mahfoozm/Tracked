@@ -15,7 +15,7 @@ const CreateTaskPage = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
 
     const formattedEndDate = new Date(date).toISOString().split("T")[0];
     const today = new Date().toISOString().split("T")[0];
@@ -31,9 +31,12 @@ const CreateTaskPage = () => {
     };
   
     console.log('Created Task JSON:', taskData);
-    addTask(taskData);
-
-    navigate("/tasks");
+    try {
+      await addTask(taskData);
+      navigate("/tasks");
+    } catch (e) {
+      console.error("Error: ", e);
+    }
   };
 
   const addTask = async (taskData) => {
