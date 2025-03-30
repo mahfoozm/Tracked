@@ -1,17 +1,24 @@
-# Use an official OpenJDK image to run the app
-FROM openjdk:17-jdk-slim
-
-# Set working directory
+# === Stage 1: Build JAR file ===
+FROM maven:3.8.3-openjdk-17 AS build-stage
 WORKDIR /app
 
-# Copy the JAR file from the build stage
-COPY /UserService/target/*.jar app.jar
+COPY pom.xml .
+COPY JavaLibrary/ JavaLibrary/
+COPY ProjectService/ ProjectService/
+COPY TaskService/ TaskService/
+COPY UserService/ UserService/
+COPY NotificationService/ NotificationService/
 
-# Create upload directory and set permissions
+RUN mvn clean install -DskipTests
+
+# === Stage 2: Run JAR file ===
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+
 RUN mkdir -p /app/uploads/profile-images && chmod -R 777 /app/uploads
 
-# Expose the port for the server to run on
+COPY --from=build-stage /app/UserService/target/*.jar app.jar
+
 EXPOSE 8081
 
-# Run the Spring Boot application
 ENTRYPOINT ["java", "-jar", "app.jar"]

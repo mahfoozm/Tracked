@@ -6,30 +6,75 @@ const UserTasks = () => {
   const { user } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Session expired. Please log in again.");
+        navigate("/login");
+        return;
+      }
+    
+      try {
+        const response = await fetch("http://localhost:8081/users/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+    
+        if (!response.ok) throw new Error("Failed to fetch user data.");
+    
+        const data = await response.json();
+        setUserData(data);
+      } catch (err) {
+        console.error("Error fetching user info:", err);
+        setError(err.message || "Error loading user data.");
+      }
+    };
+    
+    fetchUser();
+  }, [navigate]);
 
   const handleClick = () => {
     navigate("/create_task"); 
   };  
 
   useEffect(() => {
-    if (!user) {
+    if (userData) {
+      fetchTasks();
+      } else {
         setTasks([
-            { id: 1, name: "Read Nexus" },
-            { id: 2, name: "Change Engine Fluid" },
-            { id: 3, name: "Read Elementals" },
-            { id: 4, name: "Place Pre-Orders" },
-            { id: 5, name: "Change Blinker Fluid" },
-            { id: 6, name: "Pay Taxes" }, 
-            { id: 7, name: "Drive 2 Store" }, 
-            { id: 8, name: "Go to Aeroport" }, 
-            { id: 9, name: "Edit DE10 Lite Project" }, 
-            { id: 10, name: "Air Tires" }, 
-            { id: 11, name: "Fix Alignment" }, 
-            { id: 12, name: "Go 2 Aeroport Again" }
-        ]);
+          { id: 1, name: "Read Nexus" },
+          { id: 2, name: "Change Engine Fluid" },
+          { id: 3, name: "Read Elementals" },
+          { id: 4, name: "Place Pre-Orders" },
+          { id: 5, name: "Change Blinker Fluid" },
+          { id: 6, name: "Pay Taxes" }, 
+          { id: 7, name: "Drive 2 Store" }, 
+          { id: 8, name: "Go to Aeroport" }, 
+          { id: 9, name: "Edit DE10 Lite Project" }, 
+          { id: 10, name: "Air Tires" }, 
+          { id: 11, name: "Fix Alignment" }, 
+          { id: 12, name: "Go 2 Aeroport Again" }
+      ]);
       }
-  }, [user]);
+  }, [userData]);
+
+  const fetchTasks = async () => {
+    if (userData) {
+      const response = await fetch(`http://localhost:8082/task?assignee_user_id=${userData.id}`, {
+    });
+    const gotTasks = await response.json();
+    setTasks(gotTasks);
+
+    console.log("Got Tasks: ", gotTasks);
+    }
+  }
 
   const searchTasks = tasks.filter(task =>
     task.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -40,7 +85,7 @@ const UserTasks = () => {
       <div className="w-3/4 md:w-2/3 lg:w-1/2 bg-white p-8 rounded-lg shadow-lg">
         <div className="relative mb-4">
           <h2 className="text-4xl font-extrabold text-blue-600 text-center">
-            {user ? `${user}'s Tasks` : "User's Tasks"}
+            {userData ? `${userData.fullName}'s Tasks` : "User's Tasks"}
           </h2>
           <button 
             onClick={handleClick}
