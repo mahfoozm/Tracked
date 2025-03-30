@@ -7,11 +7,10 @@ import defaultProfileImage from "../assets/images/default-profile.png";
 const WEBSOCKET_BASE_URL = "localhost:8080";
 
 const Profile = () => {
-  const socketUrl = `ws://${WEBSOCKET_BASE_URL}/ws`;
   const navigate = useNavigate();
   const { logoutUser } = useAuth();
 
-  const [messages, setMessages] = useState([]);
+  const [notifications, setNotifications] = useState([]);
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
   const [profileImage, setProfileImage] = useState(defaultProfileImage);
@@ -21,14 +20,8 @@ const Profile = () => {
   const [editedFields, setEditedFields] = useState({});
 
   const fileInputRef = useRef(null);
-  const { sendMessage, lastMessage } = useWebSocket(socketUrl);
-
-  useEffect(() => {
-    if (lastMessage !== null) {
-      setMessages((prev) => prev.concat(lastMessage.data));
-    }
-  }, [lastMessage]);
-
+  
+  // Get current user data first, then establish websocket connection with userId
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
@@ -71,6 +64,30 @@ const Profile = () => {
 
     fetchUser();
   }, [logoutUser, navigate]);
+  
+  // WebSocket connection with user ID
+  const { lastMessage } = useWebSocket(
+    userData ? `ws://${WEBSOCKET_BASE_URL}/ws?userId=${userData.id}` : null,
+    {
+      shouldReconnect: () => userData !== null,
+      reconnectAttempts: 10,
+      reconnectInterval: 3000,
+    }
+  );
+
+  useEffect(() => {
+    if (lastMessage !== null) {
+      try {
+        const notification = JSON.parse(lastMessage.data);
+        // Check if this notification is for the current user
+        if (!notification.userId || notification.userId === userData?.id) {
+          setNotifications(prev => [...prev, notification]);
+        }
+      } catch (e) {
+        console.error("Failed to parse notification:", e);
+      }
+    }
+  }, [lastMessage, userData]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -158,9 +175,15 @@ const Profile = () => {
       setError(err.message || "Update failed.");
     }
   };
+  
+  // Format the timestamp to a readable date/time
+  const formatTimestamp = (timestamp) => {
+    return new Date(timestamp * 1000).toLocaleString();
+  };
 
   return (
     <div className="p-8 max-w-5xl mx-auto bg-white shadow-md rounded-lg mt-8 flex flex-col md:flex-row gap-6">
+      {/* Left column - profile picture section (unchanged) */}
       <div className="flex flex-col items-center w-full md:w-1/3 border-r md:pr-6">
         <h3 className="text-xl font-bold text-center mb-2">Profile Picture</h3>
         <img
@@ -191,6 +214,7 @@ const Profile = () => {
         </div>
       </div>
 
+      {/* Right column - profile details and notifications */}
       <div className="w-full md:w-2/3">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold text-blue-600 mb-4">User Profile</h2>
@@ -259,17 +283,22 @@ const Profile = () => {
         <hr className="my-6" />
 
         <h3 className="text-xl font-semibold text-blue-600 mb-2">
-          Real-time Messages
+          Your Notifications
         </h3>
-        {messages.length > 0 ? (
-          messages.map((msg, idx) => (
-            <p key={idx} className="text-sm text-gray-700">
-              {msg}
-            </p>
-          ))
-        ) : (
-          <p className="text-sm text-gray-500">No messages yet.</p>
-        )}
+        <div className="bg-gray-50 p-4 rounded-lg max-h-60 overflow-y-auto">
+          {notifications.length > 0 ? (
+            notifications.map((notification, idx) => (
+              <div key={idx} className="mb-3 p-2 bg-white shadow-sm rounded border-l-4 border-blue-500">
+                <p className="text-sm text-gray-700">{notification.content}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {formatTimestamp(notification.timestamp)}
+                </p>
+              </div>
+            ))
+          ) : (
+            <p className="text-sm text-gray-500">No notifications yet.</p>
+          )}
+        </div>
       </div>
     </div>
   );

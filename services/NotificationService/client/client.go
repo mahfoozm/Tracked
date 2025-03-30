@@ -12,10 +12,8 @@ import (
 
 // ClientManager manages active WebSocket connections.
 type ClientManager struct {
-	// Clients stores active WebSocket connections. This is a mapping from
-	// connections to booleans instead of a list because the add and delete
-	// functionality is O(1), whereas with a list it is O(n).
-	Clients map[*websocket.Conn]bool
+    // Clients maps WebSocket connections to user IDs
+	Clients map[*websocket.Conn]string
 	// Mutex to protect access to the Clients mapping. This mutex should be
 	// locked whenever reading from or writing to Clients.
 	ClientMutex sync.Mutex
@@ -23,16 +21,16 @@ type ClientManager struct {
 
 // NewClientManager creates and returns a new instance of ClientManager.
 func NewClientManager() *ClientManager {
-	return &ClientManager{Clients: make(map[*websocket.Conn]bool)}
+    return &ClientManager{Clients: make(map[*websocket.Conn]string)}
 }
 
 // AddClient registers a new WebSocket connection (conn) in the client manager.
-func (cm *ClientManager) AddClient(conn *websocket.Conn) {
-	cm.ClientMutex.Lock()
-	defer cm.ClientMutex.Unlock()
+func (cm *ClientManager) AddClient(conn *websocket.Conn, userId string) {
+    cm.ClientMutex.Lock()
+    defer cm.ClientMutex.Unlock()
 
-	cm.Clients[conn] = true
-	log.Printf("New client connection: %s\n", conn.RemoteAddr())
+    cm.Clients[conn] = userId
+    log.Printf("New client connection: %s for user: %s\n", conn.RemoteAddr(), userId)
 }
 
 // CloseAllConnections closes and removes all active WebSocket connections from
@@ -49,24 +47,23 @@ func (cm *ClientManager) CloseAllConnections() {
 	}
 }
 
-// BroadcastMessage sends a message to all connected WebSocket clients. If a
-// client fails to receive the message, its connection is closed and it is
-// removed from the Clients mapping.
-func (cm *ClientManager) BroadcastMessage(message string) {
-	cm.ClientMutex.Lock()
-	defer cm.ClientMutex.Unlock()
+// BroadcastUserMessage sends a message to specific user's WebSocket connections.
+// If a client fails to receive the message, its connection is closed and removed.
+func (cm *ClientManager) BroadcastUserMessage(userId string, message string) {
+    cm.ClientMutex.Lock()
+    defer cm.ClientMutex.Unlock()
 
-	// Send the message to each connection in the client mapping
-	for conn := range cm.Clients {
-		// Send the message to the connection
-		err := conn.WriteMessage(websocket.TextMessage, []byte(message))
+    // Send the message to each connection matching the userId
+    for conn, connUserId := range cm.Clients {
+        // Only send to connections belonging to the specified user
+        if connUserId == userId {
+            err := conn.WriteMessage(websocket.TextMessage, []byte(message))
 
-		// If there was an error sending the websocket message, close
-		// the client's connection and remove it from the client mapping
-		if err != nil {
-			log.Printf("Error sending to websocket: %v. Removing client %s", err, conn.RemoteAddr())
-			conn.Close()
-			delete(cm.Clients, conn)
-		}
-	}
+            if err != nil {
+                log.Printf("Error sending to websocket: %v. Removing client %s", err, conn.RemoteAddr())
+                conn.Close()
+                delete(cm.Clients, conn)
+            }
+        }
+    }
 }
