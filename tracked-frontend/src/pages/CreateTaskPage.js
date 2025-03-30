@@ -17,13 +17,18 @@ const CreateTaskPage = () => {
 
   
   const handleSubmit = () => {
+
+    const formattedEndDate = new Date(date).toISOString().split("T")[0];
+    const today = new Date().toISOString().split("T")[0];
+
     const taskData = {
       name : taskName,
       projectId : projectName,
-      assigneeUserId : assignee,
+      assigneeUserId : assignee.id,
       creatorUserId : userData.id,
-      endData: date,
-      description,
+      startDate : today,
+      endDate: formattedEndDate,
+      status: "IN_PROGRESS"
     };
   
     console.log('Created Task JSON:', taskData);

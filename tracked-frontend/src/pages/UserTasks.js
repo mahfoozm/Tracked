@@ -69,7 +69,7 @@ const UserTasks = () => {
     if (userData) {
       const response = await fetch(`http://localhost:8082/task?assignee_user_id=${userData.id}`, {
     });
-    const gotTasks = response.json;
+    const gotTasks = await response.json();
     setTasks(gotTasks);
 
     console.log("Got Tasks: ", gotTasks);
