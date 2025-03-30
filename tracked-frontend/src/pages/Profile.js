@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import useWebSocket from "react-use-websocket";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../services/AuthContext";
 import defaultProfileImage from "../assets/images/default-profile.png";
-
-const WEBSOCKET_BASE_URL = "localhost:8080";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -64,30 +61,6 @@ const Profile = () => {
 
     fetchUser();
   }, [logoutUser, navigate]);
-  
-  // WebSocket connection with user ID
-  const { lastMessage } = useWebSocket(
-    userData ? `ws://${WEBSOCKET_BASE_URL}/ws?userId=${userData.id}` : null,
-    {
-      shouldReconnect: () => userData !== null,
-      reconnectAttempts: 10,
-      reconnectInterval: 3000,
-    }
-  );
-
-  useEffect(() => {
-    if (lastMessage !== null) {
-      try {
-        const notification = JSON.parse(lastMessage.data);
-        // Check if this notification is for the current user
-        if (!notification.userId || notification.userId === userData?.id) {
-          setNotifications(prev => [...prev, notification]);
-        }
-      } catch (e) {
-        console.error("Failed to parse notification:", e);
-      }
-    }
-  }, [lastMessage, userData]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];

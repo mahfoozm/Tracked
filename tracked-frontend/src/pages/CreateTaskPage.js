@@ -27,6 +27,7 @@ const CreateTaskPage = () => {
       creatorUserId : userData.id,
       startDate : today,
       endDate: formattedEndDate,
+      description: description,
       status: "IN_PROGRESS"
     };
   

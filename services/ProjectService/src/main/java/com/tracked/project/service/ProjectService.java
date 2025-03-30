@@ -98,6 +98,7 @@ public class ProjectService {
     public Project createProject(ProjectDto input) {
         Project project = Project.builder()
             .name(input.getName())
+            .description(input.getDescription())
             .build();
         project = this.projectRepository.save(project);
         this.kafkaTemplate.send(
@@ -106,7 +107,7 @@ public class ProjectService {
             ProjectEvent.builder()
                 .id(project.getId())
                 .name(project.getName())
-                .userIds(new ArrayList<>())
+                .userIds(input.getProjectMembers())
                 .createdAt(project.getCreatedAt())
                 .updatedAt(project.getUpdatedAt())
                 .build()

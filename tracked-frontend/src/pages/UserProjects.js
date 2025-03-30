@@ -105,8 +105,8 @@ const UserProjects = () => {
         <div className="h-[61vh] overflow-y-auto border border-gray-200 rounded-md p-4">
           {searchProjects.length > 0 ? (
             <ul className="space-y-3">
-              {searchProjects.map((project) => (
-                <div>
+              {searchProjects.map((project, index) => (
+                <div key={index}>
                   <li 
                     key={project.id} 
                     className="p-4 bg-gray-50 rounded-md shadow-sm hover:text-green-300"

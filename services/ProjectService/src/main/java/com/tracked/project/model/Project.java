@@ -38,6 +38,9 @@ public class Project {
     @Column(name = "updated_at")
     private Date updatedAt;
 
+    @Column(name = "description")
+    private String description;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<UserProjectTable> userProjectTables;

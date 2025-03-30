@@ -15,5 +15,6 @@ import java.util.ArrayList;
 public class ProjectDto {
     @NotNull
     private String name;
+    private String description;
     private ArrayList<Integer> projectMembers; // List of members in a projects
 }

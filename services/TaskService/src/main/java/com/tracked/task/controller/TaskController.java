@@ -59,12 +59,12 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskResponse> getTaskById(@PathVariable Integer id) {
+    public ResponseEntity<TaskResponse> getTaskById(@PathVariable(value = "id") Integer id) {
         return ResponseEntity.ok(this.taskService.findById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskResponse> updateTask(@PathVariable Integer id, @RequestBody @Valid TaskUpdateRequest taskUpdateRequest) {
+    public ResponseEntity<TaskResponse> updateTask(@PathVariable(value = "id") Integer id, @RequestBody @Valid TaskUpdateRequest taskUpdateRequest) {
         return ResponseEntity.ok(this.taskService.updateTask(id, taskUpdateRequest));
     }
 
@@ -73,7 +73,7 @@ public class TaskController {
         @RequestParam(value = "project_id", required = false) Optional<Integer> projectId,
         @RequestParam(value = "assignee_user_id", required = false) Optional<Integer> assigneeUserId,
         @RequestParam(value = "creator_user_id", required = false) Optional<Integer> creatorUserId,
-        @RequestParam(required = false) Optional<Task.Status> status
+        @RequestParam(value = "status", required = false) Optional<Task.Status> status
     ) {
         return ResponseEntity.ok(
             this.taskService.findTasks(

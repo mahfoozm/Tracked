@@ -114,6 +114,8 @@ func (cm *ClientManager) UpdateTaskEventStore(task_event *TaskEvent) {
 }
 
 func (cm *ClientManager) BroadcastTaskMessage(task_event *TaskEvent, message *string) {
+	log.Printf("Broadcasting task event %d\n", task_event.ID)
+
 	project_id := task_event.ProjectID
 	project_event := cm.ProjectEventStore[project_id]
 	if project_event == nil {
@@ -128,10 +130,11 @@ func (cm *ClientManager) BroadcastTaskMessage(task_event *TaskEvent, message *st
 	}
 
 	for client_user_id := range cm.Clients {
+		log.Println(user_ids)
+		log.Println(client_user_id)
 		if utils.Contains(user_ids, client_user_id) {
 			log.Printf("Sending task event to user %d", client_user_id)
 			conn := cm.Clients[client_user_id]
-			log.Println(conn)
 
 			err := conn.WriteMessage(websocket.TextMessage, []byte(*message))
 			if err != nil {
