@@ -45,25 +45,25 @@ const UserTasks = () => {
   };  
 
   useEffect(() => {
-    if (!user) {
-        setTasks([
-            { id: 1, name: "Read Nexus" },
-            { id: 2, name: "Change Engine Fluid" },
-            { id: 3, name: "Read Elementals" },
-            { id: 4, name: "Place Pre-Orders" },
-            { id: 5, name: "Change Blinker Fluid" },
-            { id: 6, name: "Pay Taxes" }, 
-            { id: 7, name: "Drive 2 Store" }, 
-            { id: 8, name: "Go to Aeroport" }, 
-            { id: 9, name: "Edit DE10 Lite Project" }, 
-            { id: 10, name: "Air Tires" }, 
-            { id: 11, name: "Fix Alignment" }, 
-            { id: 12, name: "Go 2 Aeroport Again" }
-        ]);
+    if (userData) {
+      fetchTasks();
       } else {
-        fetchTasks();
+        setTasks([
+          { id: 1, name: "Read Nexus" },
+          { id: 2, name: "Change Engine Fluid" },
+          { id: 3, name: "Read Elementals" },
+          { id: 4, name: "Place Pre-Orders" },
+          { id: 5, name: "Change Blinker Fluid" },
+          { id: 6, name: "Pay Taxes" }, 
+          { id: 7, name: "Drive 2 Store" }, 
+          { id: 8, name: "Go to Aeroport" }, 
+          { id: 9, name: "Edit DE10 Lite Project" }, 
+          { id: 10, name: "Air Tires" }, 
+          { id: 11, name: "Fix Alignment" }, 
+          { id: 12, name: "Go 2 Aeroport Again" }
+      ]);
       }
-  }, [user]);
+  }, [userData]);
 
   const fetchTasks = async () => {
     if (userData) {
