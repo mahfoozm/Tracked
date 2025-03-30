@@ -92,24 +92,24 @@ public class TaskService {
             .assigneeUserId(taskCreateRequest.getAssigneeUserId())
             .build();
 
-        // if (task.getCreatorUserId() != null && this.userEventStore.getUserEvent(task.getCreatorUserId()) == null) {
-        //     throw new ResponseStatusException(
-        //         HttpStatus.BAD_REQUEST,
-        //         String.format("Creating user with id %s does not exist", task.getCreatorUserId())
-        //     );
-        // }
-        // if (task.getAssigneeUserId() != null && this.userEventStore.getUserEvent(task.getAssigneeUserId()) == null) {
-        //     throw new ResponseStatusException(
-        //         HttpStatus.BAD_REQUEST,
-        //         String.format("Assigning user with id %s does not exist", task.getAssigneeUserId())
-        //     );
-        // }
-        // if (task.getProjectId() != null && this.projectEventStore.getProjectEvent(task.getProjectId()) == null) {
-        //     throw new ResponseStatusException(
-        //         HttpStatus.BAD_REQUEST,
-        //         String.format("Project with id %s does not exist", task.getProjectId())
-        //     );
-        // }
+        if (task.getCreatorUserId() != null && this.userEventStore.getUserEvent(task.getCreatorUserId()) == null) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                String.format("Creating user with id %s does not exist", task.getCreatorUserId())
+            );
+        }
+        if (task.getAssigneeUserId() != null && this.userEventStore.getUserEvent(task.getAssigneeUserId()) == null) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                String.format("Assigning user with id %s does not exist", task.getAssigneeUserId())
+            );
+        }
+        if (task.getProjectId() != null && this.projectEventStore.getProjectEvent(task.getProjectId()) == null) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                String.format("Project with id %s does not exist", task.getProjectId())
+            );
+        }
 
         task = this.taskRepository.save(task);
 
