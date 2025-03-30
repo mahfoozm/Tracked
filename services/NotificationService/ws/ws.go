@@ -32,17 +32,22 @@ type WebSocketHandler struct {
 // registers it in the ClientManager. This should be used with the http package
 // like this: http.HandleFunc("/ws", wsh.HandleWebSocket)
 func (wsh *WebSocketHandler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
-	// Upgrade HTTP connection to websocket connection
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("Error upgrading to websocket:", err)
-		return
-	}
+    userId := r.URL.Query().Get("userId")
+    if userId == "" {
+        log.Println("No user ID provided in WebSocket connection")
+        http.Error(w, "User ID is required", http.StatusBadRequest)
+        return
+    }
 
-	// Add the connection to the connection manager
-	wsh.Cm.AddClient(conn)
+    conn, err := upgrader.Upgrade(w, r, nil)
+    if err != nil {
+        log.Println("Error upgrading to websocket:", err)
+        return
+    }
 
-	log.Printf("New websocket connection: %s\n", conn.RemoteAddr())
+    wsh.Cm.AddClient(conn, userId)
+
+    log.Printf("New websocket connection: %s for user: %s\n", conn.RemoteAddr(), userId)
 }
 
 // listenForShutdown waits for a shutdown signal (which will come from the
