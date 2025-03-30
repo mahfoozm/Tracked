@@ -85,18 +85,14 @@ public class TaskController {
         );
     }
 
-    @GetMapping("/ping")
-    public ResponseEntity<String> ping() {
-        return ResponseEntity.ok("pong");
-    }
-
-    @GetMapping("/debug/users")
-    public ResponseEntity<Map<String, Object>> debugUsers() {
-        Map<String, Object> debug = new HashMap<>();
-        debug.put("users", userEventStore.getAllUserEvents());
-        debug.put("userEventStoreClass", userEventStore.getClass().getName());
-        return ResponseEntity.ok(debug);
-    }
+    // Used for debugging kafka integration.
+    // @GetMapping("/debug/users")
+    // public ResponseEntity<Map<String, Object>> debugUsers() {
+    //     Map<String, Object> debug = new HashMap<>();
+    //     debug.put("users", userEventStore.getAllUserEvents());
+    //     debug.put("userEventStoreClass", userEventStore.getClass().getName());
+    //     return ResponseEntity.ok(debug);
+    // }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
