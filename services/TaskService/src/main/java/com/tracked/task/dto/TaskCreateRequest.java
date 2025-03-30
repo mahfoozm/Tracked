@@ -24,6 +24,7 @@ public class TaskCreateRequest {
     private Integer creatorUserId;
     @NotNull
     Task.Status status;
+    private String description;
     private Integer assigneeUserId;
     private LocalDate startDate;
     private LocalDate endDate;

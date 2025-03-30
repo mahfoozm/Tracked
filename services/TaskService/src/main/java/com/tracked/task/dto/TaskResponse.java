@@ -22,6 +22,7 @@ public class TaskResponse {
     private String name;
     private ProjectEvent project;
     private UserEvent creator;
+    private String description;
     private UserEvent assignee;
     private Task.Status status;
     private LocalDate startDate;
@@ -34,6 +35,7 @@ public class TaskResponse {
         this.name = task.getName();
         this.project = project;
         this.creator = creator;
+        this.description = task.getDescription();
         this.assignee = assignee;
         this.status = task.getStatus();
         this.startDate = task.getStartDate();

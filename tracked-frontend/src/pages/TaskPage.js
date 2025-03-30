@@ -99,7 +99,7 @@ const TaskPage = () => {
                 </div>
                 <div className="mt-6">
                     <h3 className="font-semibold text-gray-700">Description:</h3>
-                    <p className="text-gray-900 mt-2 bg-gray-50 p-4 rounded-md">[Task Description]</p>
+                    <p className="text-gray-900 mt-2 bg-gray-50 p-4 rounded-md">{taskData ? taskData.description : "Description"}</p>
                 </div>
             </div>
         </div>

@@ -65,6 +65,9 @@ public class Task {
     @Column(nullable = false, name = "creator_user_id")
     private Integer creatorUserId;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "assignee_user_id")
     private Integer assigneeUserId;
 
@@ -92,6 +95,7 @@ public class Task {
             .name(this.getName())
             .creatorUserId(this.getCreatorUserId())
             .assigneeUserId(this.getAssigneeUserId())
+            .projectId(this.getProjectId())
             .status(this.getStatus().fromValue())
             .startDate(this.getStartDate())
             .endDate(this.getEndDate())

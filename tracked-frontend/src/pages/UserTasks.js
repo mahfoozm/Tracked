@@ -105,8 +105,8 @@ const UserTasks = () => {
         <div className="h-[61vh] overflow-y-auto border border-gray-200 rounded-md p-4">
           {searchTasks.length > 0 ? (
             <ul className="space-y-3">
-              {searchTasks.map((task) => (
-                <div>
+              {searchTasks.map((task, index) => (
+                <div key={index}>
                   <li 
                     key={task.id} 
                     className="p-4 bg-gray-50 rounded-md shadow-sm hover:text-green-300"

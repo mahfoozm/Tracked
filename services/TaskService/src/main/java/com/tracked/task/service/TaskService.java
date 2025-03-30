@@ -84,6 +84,7 @@ public class TaskService {
     public TaskResponse createTask(TaskCreateRequest taskCreateRequest) {
         Task task = Task.builder()
             .name(taskCreateRequest.getName())
+            .description(taskCreateRequest.getDescription())
             .status(taskCreateRequest.getStatus())
             .startDate(taskCreateRequest.getStartDate())
             .endDate(taskCreateRequest.getEndDate())

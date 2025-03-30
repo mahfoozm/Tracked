@@ -118,6 +118,7 @@ services:
       - kafka
     environment:
       - KAFKA_BROKER=kafka:29092
+    restart: on-failure
     networks:
       - microservices-network
 
