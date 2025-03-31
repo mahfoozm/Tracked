@@ -20,6 +20,21 @@ services:
       timeout: 5s
       retries: 5
 
+  frontend:
+    build:
+      context: ./tracked-frontend
+      dockerfile: Dockerfile
+    container_name: tracked-frontend
+    ports:
+      - "80:80"
+    networks:
+      - microservices-network
+    depends_on:
+      - user-service
+      - task-service
+      - project-service
+      - notification-service
+
   task-db:
     image: postgres:latest
     container_name: task-db
