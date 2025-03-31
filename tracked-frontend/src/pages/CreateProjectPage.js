@@ -32,7 +32,7 @@ const CreateProjectPage = () => {
 
   const addProject = async (projectData) => {
     if (userData) {
-      const response = await fetch(`http://localhost:8083/projects`, {
+      const response = await fetch(`http://132.145.109.6:8083/projects`, {
         method: "POST",
         body: JSON.stringify(projectData),
         headers: {
@@ -45,7 +45,7 @@ const CreateProjectPage = () => {
   const retrieveAllUsers = async() => {
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`http://localhost:8081/users/`, {
+    const response = await fetch(`http://132.145.109.6:8081/users/`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -70,7 +70,7 @@ const CreateProjectPage = () => {
       }
     
       try {
-        const response = await fetch("http://localhost:8081/users/me", {
+        const response = await fetch("http://132.145.109.6:8081/users/me", {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",

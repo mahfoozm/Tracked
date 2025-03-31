@@ -26,7 +26,7 @@ func (kc *KafkaConsumer[T]) StartKafkaConsumer(wg *sync.WaitGroup, topic string)
 
 	broker := os.Getenv("KAFKA_BROKER")
 	if broker == "" {
-		broker = "localhost:9092"
+		broker = "132.145.109.6:9092"
 	}
 
 	kafka_client, err := sarama.NewConsumer([]string{broker}, config)

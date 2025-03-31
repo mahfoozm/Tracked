@@ -15,7 +15,7 @@ import { AuthProvider, useAuth } from "./services/AuthContext";
 import useWebSocket from "react-use-websocket";
 import WebSocketWrapper from "./services/WebSocketWrapper";
 
-const WEBSOCKET_BASE_URL = "localhost:8080";
+const WEBSOCKET_BASE_URL = "132.145.109.6:8080";
 
 const ProtectedRoute = ({ element }) => {
   const { user } = useAuth(); 

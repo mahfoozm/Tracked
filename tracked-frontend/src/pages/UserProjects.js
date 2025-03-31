@@ -24,7 +24,7 @@ const UserProjects = () => {
         }
   
         try {
-          const response = await fetch("http://localhost:8081/users/me", {
+          const response = await fetch("http://132.145.109.6:8081/users/me", {
             headers: {
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
@@ -67,7 +67,7 @@ const UserProjects = () => {
 
   const fetchProjects = async () => {
     if (userData) {
-      const response = await fetch(`http://localhost:8083/projects/user/${userData.id}`, {
+      const response = await fetch(`http://132.145.109.6:8083/projects/user/${userData.id}`, {
     });
     const gotProjects = await response.json();
     setProjects(gotProjects);

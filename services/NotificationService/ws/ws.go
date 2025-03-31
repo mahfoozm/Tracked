@@ -98,7 +98,7 @@ func (wsh *WebSocketHandler) StartWebsocketServer(wg *sync.WaitGroup) {
 	// Handler for websocket connections
 	http.HandleFunc("/ws", wsh.HandleWebSocket)
 
-	log.Println("Listening for WebSocket connections at ws://localhost:8080/ws ...")
+	log.Println("Listening for WebSocket connections at ws://132.145.109.6:8080/ws ...")
 
 	// Start the server
 	err := server.ListenAndServe()

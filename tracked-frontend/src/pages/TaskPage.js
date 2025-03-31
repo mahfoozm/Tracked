@@ -23,7 +23,7 @@ const TaskPage = () => {
             }
 
             try {
-                const response = await fetch("http://localhost:8081/users/me", {
+                const response = await fetch("http://132.145.109.6:8081/users/me", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         "Content-Type": "application/json",
@@ -48,7 +48,7 @@ const TaskPage = () => {
     }, [id]);
 
     const fetchTask = async () => {
-        const response = await fetch(`http://localhost:8082/task/${id}`, {
+        const response = await fetch(`http://132.145.109.6:8082/task/${id}`, {
         });
         const retrivedTask = await response.json()
         setTaskData(retrivedTask);

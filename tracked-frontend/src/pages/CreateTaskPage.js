@@ -42,7 +42,7 @@ const CreateTaskPage = () => {
 
   const addTask = async (taskData) => {
     if (userData) {
-      const response = await fetch(`http://localhost:8082/task`, {
+      const response = await fetch(`http://132.145.109.6:8082/task`, {
         method: "POST",
         body: JSON.stringify(taskData),
         headers: {
@@ -55,7 +55,7 @@ const CreateTaskPage = () => {
   const retrieveAllUsers = async() => {
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`http://localhost:8081/users/`, {
+    const response = await fetch(`http://132.145.109.6:8081/users/`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -73,7 +73,7 @@ const CreateTaskPage = () => {
   const fetchProjects = async () => {
     const token = localStorage.getItem("token");
 
-      const response = await fetch(`http://localhost:8083/projects`, {
+      const response = await fetch(`http://132.145.109.6:8083/projects`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -96,7 +96,7 @@ const CreateTaskPage = () => {
         }
       
         try {
-          const response = await fetch("http://localhost:8081/users/me", {
+          const response = await fetch("http://132.145.109.6:8081/users/me", {
             headers: {
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
