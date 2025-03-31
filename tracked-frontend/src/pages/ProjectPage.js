@@ -119,7 +119,7 @@ const ProjectPage = () => {
                 </div>
                 <div className="mt-6">
                     <h3 className="font-semibold text-gray-700">Description:</h3>
-                    <p className="text-gray-900 mt-2 bg-gray-50 p-4 rounded-md">{[projectData ? projectData.description : "Description"]}</p>
+                    <p className="text-gray-900 mt-2 bg-gray-50 p-4 rounded-md">{projectData ? projectData.description : "Description"}</p>
                 </div>
             </div>
             <div className="w-3/4 md:w-2/3 lg:w-1/2 h-[80vh] bg-white p-8 rounded-lg shadow-lg">

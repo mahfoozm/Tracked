@@ -6,13 +6,10 @@ import (
 	"encoding/json"
 	"log"
 	"notification-service/client"
+	"os"
 	"sync"
 
 	"github.com/IBM/sarama"
-)
-
-const (
-	broker = "localhost:9092" // Kafka broker address.
 )
 
 // KafkaConsumer manages the consumption of messages from Kafka and broadcasting
@@ -26,6 +23,11 @@ func (kc *KafkaConsumer[T]) StartKafkaConsumer(wg *sync.WaitGroup, topic string)
 	defer wg.Done()
 	config := sarama.NewConfig()
 	config.Consumer.Return.Errors = true
+
+	broker := os.Getenv("KAFKA_BROKER")
+	if broker == "" {
+		broker = "localhost:9092"
+	}
 
 	kafka_client, err := sarama.NewConsumer([]string{broker}, config)
 	if err != nil {
