@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8081"; 
+const API_BASE_URL = "http://132.145.109.6:8081"; 
 
 export const signup = async (fullName, email, password) => {
   try {

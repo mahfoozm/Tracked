@@ -57,7 +57,7 @@ If you would like to run notification service locally, ensure that you have the 
 3. The WebSocket server will be running at:
 
    ```
-   ws://localhost:8080/ws
+   ws://132.145.109.6:8080/ws
    ```
 
 4. To stop the service:

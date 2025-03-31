@@ -30,7 +30,7 @@ const Profile = () => {
       }
 
       try {
-        const response = await fetch("http://localhost:8081/users/me", {
+        const response = await fetch("http://132.145.109.6:8081/users/me", {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -49,7 +49,7 @@ const Profile = () => {
         // Extract file name and construct image URL
         if (data.profileImageFilename) {
           const filename = data.profileImageFilename.split("/").pop();
-          setProfileImage(`http://localhost:8081/uploads/profile-images/${filename}`);
+          setProfileImage(`http://132.145.109.6:8081/uploads/profile-images/${filename}`);
         } else {
           setProfileImage(defaultProfileImage);
         }
@@ -118,7 +118,7 @@ const Profile = () => {
         formData.append("profileImage", fileInputRef.current.files[0]);
       }
 
-      const response = await fetch("http://localhost:8081/users/update", {
+      const response = await fetch("http://132.145.109.6:8081/users/update", {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

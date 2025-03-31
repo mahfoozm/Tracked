@@ -9,7 +9,7 @@ import time
 from kafka import KafkaProducer
 
 
-KAFKA_BROKER = 'localhost:9093'
+KAFKA_BROKER = '132.145.109.6:9093'
 
 KAFKA_TOPIC = 'test_topic'
 

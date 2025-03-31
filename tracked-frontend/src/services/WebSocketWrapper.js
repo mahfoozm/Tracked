@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useAuth } from "./AuthContext";
 import useWebSocket from "react-use-websocket";
 
-const WEBSOCKET_BASE_URL = "localhost:8080";
+const WEBSOCKET_BASE_URL = "132.145.109.6:8080";
 
 export default function WebSocketWrapper({ children }) {
   const { user } = useAuth();

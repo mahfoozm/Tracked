@@ -20,7 +20,7 @@ const UserTasks = () => {
       }
     
       try {
-        const response = await fetch("http://localhost:8081/users/me", {
+        const response = await fetch("http://132.145.109.6:8081/users/me", {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -67,7 +67,7 @@ const UserTasks = () => {
 
   const fetchTasks = async () => {
     if (userData) {
-      const response = await fetch(`http://localhost:8082/task?assignee_user_id=${userData.id}`, {
+      const response = await fetch(`http://132.145.109.6:8082/task?assignee_user_id=${userData.id}`, {
     });
     const gotTasks = await response.json();
     setTasks(gotTasks);

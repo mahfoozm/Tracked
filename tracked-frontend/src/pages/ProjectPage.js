@@ -27,7 +27,7 @@ const ProjectPage = () => {
             }
 
             try {
-                const response = await fetch("http://localhost:8081/users/me", {
+                const response = await fetch("http://132.145.109.6:8081/users/me", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         "Content-Type": "application/json",
@@ -73,14 +73,14 @@ const ProjectPage = () => {
     }, [id]);
 
     const fetchProject = async () => {
-        const response = await fetch(`http://localhost:8083/projects/${id}`, {
+        const response = await fetch(`http://132.145.109.6:8083/projects/${id}`, {
         });
         const retrievedProject = await response.json();
         setProjectData(retrievedProject);
     }
 
     const fetchTasks = async () => {
-        const response = await fetch(`http://localhost:8082/task?project_id=${id}`, {
+        const response = await fetch(`http://132.145.109.6:8082/task?project_id=${id}`, {
         });
         const retrievedTasks = await response.json();
         setTasks(retrievedTasks);
